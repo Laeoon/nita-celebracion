@@ -154,11 +154,11 @@ export class DedicatoriasComponent {
 
           <!-- Barra de reacciones y comentarios -->
           <div class="pt-2 border-t border-white/5 flex items-center justify-between text-xs text-neutral-400">
-            <button data-reaccionar-ded-id="${d.id}" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full ${d.tieneMiReaccion ? 'bg-champagne-400/20 text-champagne-300 border border-champagne-400/40' : 'bg-white/5 hover:bg-white/10 text-neutral-300'} font-medium transition">
-              <svg class="w-3.5 h-3.5 ${d.tieneMiReaccion ? 'text-champagne-300 fill-champagne-400' : 'text-neutral-400'}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M4.5 9.5a4 4 0 008 0V4H4.5v5.5zM12.5 9.5a4 4 0 008 0V4h-8v5.5zM8.5 13.5v7m7-7v7M6 21h12" stroke-linecap="round" stroke-linejoin="round"></path>
+            <button data-reaccionar-ded-id="${d.id}" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full ${d.tieneMiReaccion ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30' : 'bg-white/5 hover:bg-white/10 text-neutral-300'} font-medium transition active:scale-95" title="Me gusta">
+              <svg class="w-3.5 h-3.5 ${d.tieneMiReaccion ? 'fill-rose-400 text-rose-400' : 'fill-none text-neutral-400'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
-              <span>${d.reaccionesCount || 0} Salud</span>
+              <span>${d.reaccionesCount || 0}</span>
             </button>
 
             <span class="text-[10px] text-neutral-500 font-mono">${comentarios.length} comentarios</span>

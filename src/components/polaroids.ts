@@ -9,7 +9,6 @@ import type { Recuerdo, CategoriaRecuerdo } from '../types';
 export class PolaroidsComponent {
   private container: HTMLElement;
   private previewAudio: HTMLAudioElement = new Audio();
-  private previewInterval: number | null = null;
   private selectedAudioFile: File | null = null;
   private selectedPhotoBlob: Blob | null = null;
   private trimmerAudioDuration: number = 0;
@@ -145,22 +144,41 @@ export class PolaroidsComponent {
                 </label>
               </div>
 
-              <!-- Controles deslizantes del recortador (aparece al elegir audio) -->
+              <!-- Controles deslizantes del recortador estilo Instagram (aparece al elegir audio) -->
               <div id="trimmer-controls" class="hidden space-y-3 pt-2 border-t border-white/10">
                 <div class="flex items-center justify-between text-xs">
                   <span id="trimmer-track-name" class="font-semibold text-white truncate max-w-[200px]">Canción seleccionada</span>
-                  <button type="button" id="btn-preescucha-trimmer" class="px-2.5 py-1 rounded-lg btn-secondary text-[11px] flex items-center gap-1 text-champagne-300">
+                  <button type="button" id="btn-preescucha-trimmer" class="px-3 py-1.5 rounded-xl btn-secondary text-[11px] flex items-center gap-1.5 text-champagne-300 font-medium">
                     <span id="trimmer-btn-text">Escuchar 30s</span>
                   </button>
                 </div>
 
-                <div class="space-y-1">
-                  <div class="flex justify-between text-[10px] text-neutral-400 font-mono">
+                <!-- Ventana visual de 30 segundos estilo Instagram Stories -->
+                <div class="space-y-2">
+                  <div class="relative w-full h-12 bg-black/50 rounded-xl border border-white/10 overflow-hidden flex items-center px-1 select-none" id="trimmer-track-container">
+                    <!-- Barras de onda decorativas de fondo -->
+                    <div class="absolute inset-0 flex items-center justify-between px-2 opacity-20 pointer-events-none">
+                      ${Array.from({ length: 44 }).map((_, i) => `
+                        <span class="w-1 bg-white rounded-full" style="height: ${Math.round((Math.sin(i * 0.45) * 0.5 + 0.5) * 24 + 6)}px"></span>
+                      `).join('')}
+                    </div>
+
+                    <!-- Ventana activa de 30s con borde champaña y playhead interno -->
+                    <div id="trimmer-window-box" class="absolute top-1 bottom-1 border-2 border-champagne-400 bg-champagne-400/25 backdrop-blur-sm rounded-lg shadow-champagne-glow flex items-center justify-between px-1 pointer-events-none" style="left: 0%; width: 25%;">
+                      <span class="w-1 h-3.5 bg-champagne-300 rounded-full"></span>
+                      <div id="trimmer-playhead" class="absolute top-0 bottom-0 w-1 bg-white shadow-lg rounded-full" style="left: 0%;"></div>
+                      <span class="w-1 h-3.5 bg-champagne-300 rounded-full"></span>
+                    </div>
+                  </div>
+
+                  <!-- Control deslizante suave -->
+                  <input type="range" id="trimmer-slider" min="0" max="100" value="0" step="0.5" class="w-full accent-champagne-400 cursor-pointer" />
+
+                  <div class="flex items-center justify-between text-[10px] font-mono text-neutral-400">
                     <span>Inicio: <strong id="trimmer-start-val" class="text-champagne-300">0:00</strong></span>
-                    <span>Duración: <strong class="text-white">30 seg</strong></span>
+                    <span id="trimmer-progress-val" class="text-white font-semibold">0:00 / 0:30</span>
                     <span>Fin: <strong id="trimmer-end-val" class="text-champagne-300">0:30</strong></span>
                   </div>
-                  <input type="range" id="trimmer-slider" min="0" max="100" value="0" step="1" class="w-full accent-champagne-400 cursor-pointer" />
                 </div>
               </div>
             </div>
@@ -257,16 +275,18 @@ export class PolaroidsComponent {
       trimmerControls?.classList.remove('hidden');
       if (trimmerName) trimmerName.textContent = file.name;
 
-      // Obtener duración del audio
-      const tempAudio = new Audio(URL.createObjectURL(file));
-      tempAudio.addEventListener('loadedmetadata', () => {
-        this.trimmerAudioDuration = Math.floor(tempAudio.duration) || 120;
+      this.detenerPreescucha();
+      this.previewAudio.src = URL.createObjectURL(file);
+
+      // Obtener duración del audio y calibrar la ventana
+      this.previewAudio.onloadedmetadata = () => {
+        this.trimmerAudioDuration = Math.max(30, this.previewAudio.duration || 120);
         if (trimmerSlider) {
           trimmerSlider.max = String(Math.max(0, this.trimmerAudioDuration - 30));
           trimmerSlider.value = '0';
           this.actualizarTrimmerLabels(0);
         }
-      });
+      };
     });
 
     trimmerSlider?.addEventListener('input', () => {
@@ -290,17 +310,32 @@ export class PolaroidsComponent {
       audioPlayer.detenerPolaroidAudio();
 
       const start = Number(trimmerSlider.value) || 0;
-      this.previewAudio.src = URL.createObjectURL(this.selectedAudioFile);
       this.previewAudio.currentTime = start;
-      this.previewAudio.play().then(() => {
-        const btnText = document.getElementById('trimmer-btn-text');
-        if (btnText) btnText.textContent = 'Detener';
 
-        this.previewInterval = window.setInterval(() => {
-          if (this.previewAudio.currentTime >= start + 30 || this.previewAudio.ended) {
-            this.detenerPreescucha();
-          }
-        }, 150);
+      const playhead = document.getElementById('trimmer-playhead');
+      const progEl = document.getElementById('trimmer-progress-val');
+      const btnText = document.getElementById('trimmer-btn-text');
+
+      if (btnText) btnText.textContent = 'Detener';
+
+      this.previewAudio.ontimeupdate = () => {
+        const current = this.previewAudio.currentTime;
+        const elapsed = Math.max(0, current - start);
+        const pct = Math.min(100, Math.max(0, (elapsed / 30) * 100));
+
+        if (playhead) playhead.style.left = `${pct}%`;
+        if (progEl) progEl.textContent = `${this.formatTime(Math.min(30, elapsed))} / 0:30`;
+
+        // Parada estricta a los 30 segundos
+        if (current >= start + 30 || this.previewAudio.ended) {
+          this.detenerPreescucha();
+          this.previewAudio.currentTime = start;
+        }
+      };
+
+      this.previewAudio.play().catch((err) => {
+        console.warn('Error al reproducir preview 30s:', err);
+        this.detenerPreescucha();
       });
     });
 
@@ -384,18 +419,33 @@ export class PolaroidsComponent {
   private actualizarTrimmerLabels(start: number): void {
     const startEl = document.getElementById('trimmer-start-val');
     const endEl = document.getElementById('trimmer-end-val');
+    const progEl = document.getElementById('trimmer-progress-val');
+    const windowBox = document.getElementById('trimmer-window-box');
+    const playhead = document.getElementById('trimmer-playhead');
+
     if (startEl) startEl.textContent = this.formatTime(start);
     if (endEl) endEl.textContent = this.formatTime(start + 30);
+    if (progEl) progEl.textContent = '0:00 / 0:30';
+    if (playhead) playhead.style.left = '0%';
+
+    // Calcular posición de la ventana de 30s en porcentaje
+    if (windowBox && this.trimmerAudioDuration > 0) {
+      const leftPct = Math.max(0, Math.min(100, (start / this.trimmerAudioDuration) * 100));
+      const widthPct = Math.max(10, Math.min(100, (30 / this.trimmerAudioDuration) * 100));
+      windowBox.style.left = `${leftPct}%`;
+      windowBox.style.width = `${widthPct}%`;
+    }
   }
 
   private detenerPreescucha(): void {
-    if (this.previewInterval) {
-      clearInterval(this.previewInterval);
-      this.previewInterval = null;
-    }
     this.previewAudio.pause();
+    this.previewAudio.ontimeupdate = null;
     const btnText = document.getElementById('trimmer-btn-text');
     if (btnText) btnText.textContent = 'Escuchar 30s';
+    const playhead = document.getElementById('trimmer-playhead');
+    if (playhead) playhead.style.left = '0%';
+    const progEl = document.getElementById('trimmer-progress-val');
+    if (progEl) progEl.textContent = '0:00 / 0:30';
   }
 
   private actualizarLista(): void {
@@ -479,10 +529,10 @@ export class PolaroidsComponent {
                 ${r.autorApodo ? `<span class="text-[11px] text-neutral-500 font-normal">(${r.autorApodo})</span>` : ''}
               </div>
 
-              <!-- Botón de reacción Brindis/Salud -->
-              <button data-reaccionar-id="${r.id}" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full ${r.tieneMiReaccion ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'} text-xs font-semibold transition">
-                <svg class="w-3.5 h-3.5 ${r.tieneMiReaccion ? 'text-amber-600 fill-amber-500' : 'text-neutral-500'}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path d="M4.5 9.5a4 4 0 008 0V4H4.5v5.5zM12.5 9.5a4 4 0 008 0V4h-8v5.5zM8.5 13.5v7m7-7v7M6 21h12" stroke-linecap="round" stroke-linejoin="round"></path>
+              <!-- Botón de reacción Me gusta (Corazón) -->
+              <button data-reaccionar-id="${r.id}" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full ${r.tieneMiReaccion ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-600'} text-xs font-semibold transition active:scale-95" title="Me gusta">
+                <svg class="w-3.5 h-3.5 ${r.tieneMiReaccion ? 'fill-rose-500 text-rose-500' : 'fill-none text-neutral-500'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>${r.reaccionesCount || 0}</span>
               </button>

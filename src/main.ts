@@ -10,8 +10,13 @@ import { NavigationComponent } from './components/navigation';
 import { AdminModalComponent } from './components/adminModal';
 import { AuthModalComponent } from './components/authModal';
 
+import { ParticlesBackground } from './components/particles';
+
 // Inicializar la sesión y validación de tokens
 SessionService.init();
+
+// Inicializar fondo animado de partículas champaña
+new ParticlesBackground('bg-particles');
 
 // Inicializar componentes
 const navigation = new NavigationComponent('main-header', () => {
