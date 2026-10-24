@@ -1,0 +1,1941 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Mariana “Nita” | 29 de Octubre</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=Syne:wght@700;800&amp;display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            midnight: '#0b0a0e',
+            obsidian: '#121117',
+            velvet: '#18161f',
+            champagne: {
+              200: '#f3e5c8',
+              300: '#e5cb99',
+              400: '#d4a86a',
+              500: '#b8894a'
+            }
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'serif'],
+            display: ['"Syne"', 'sans-serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"Space Grotesk"', 'monospace']
+          },
+          boxShadow: {
+            'subtle': '0 10px 30px -10px rgba(0, 0, 0, 0.65)',
+            'glass': '0 12px 32px 0 rgba(0, 0, 0, 0.55)'
+          }
+        }
+      }
+    }
+  </script>
+  <style data-purpose="luxury-effects">
+    body {
+      background-color: #0b0a0e;
+      color: #f2efe9;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bg-ambient {
+      background:
+        radial-gradient(circle at 20% 10%, rgba(212, 168, 106, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 80% 85%, rgba(212, 168, 106, 0.05) 0%, transparent 45%);
+    }
+
+    .glass-panel {
+      background: rgba(20, 18, 25, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-panel-subtle {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .champagne-text {
+      color: #e5cb99;
+    }
+
+    .btn-primary {
+      background-color: #d4a86a;
+      color: #0b0a0e;
+      transition: background-color 0.2s ease, transform 0.15s ease;
+    }
+    .btn-primary:hover {
+      background-color: #e0b77d;
+    }
+    .btn-primary:active {
+      transform: scale(0.99);
+    }
+
+    .btn-secondary {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: #e5dfd5;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.09);
+      border-color: rgba(212, 168, 106, 0.4);
+    }
+
+    .polaroid-card {
+      background: linear-gradient(180deg, #faf8f5 0%, #f0ece1 100%);
+      box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.7), 0 2px 6px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+    }
+    .polaroid-card:hover {
+      transform: translateY(-2px) rotate(0deg);
+    }
+
+    @keyframes waveAnim {
+      0%, 100% { height: 4px; }
+      50% { height: 20px; }
+    }
+    .wave-bar {
+      height: 4px;
+      transition: height 0.2s ease;
+    }
+    .is-playing .wave-bar {
+      animation: waveAnim 1.1s ease-in-out infinite;
+    }
+    .is-playing .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+    .is-playing .wave-bar:nth-child(3) { animation-delay: 0.35s; }
+    .is-playing .wave-bar:nth-child(4) { animation-delay: 0.2s; }
+    .is-playing .wave-bar:nth-child(5) { animation-delay: 0.45s; }
+
+    @keyframes spinDisc {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .vinyl-spin {
+      animation: spinDisc 9s linear infinite;
+      animation-play-state: paused;
+    }
+    .is-playing .vinyl-spin {
+      animation-play-state: running;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-midnight min-h-screen text-slate-100 bg-ambient relative overflow-x-hidden pb-28">
+
+  <!-- Hidden file inputs for organizer MP3s and photo replacement -->
+  <input accept="audio/*" class="hidden" id="global-mp3-input" multiple type="file"/>
+  <input accept="image/*" class="hidden" id="card-photo-replace-input" type="file"/>
+
+  <!-- Sticky Header -->
+  <header class="sticky top-0 z-40 px-4 pt-3.5 pb-3 backdrop-blur-xl bg-midnight/90 border-b border-white/10" data-purpose="main-navigation">
+    <div class="max-w-xl mx-auto flex flex-col gap-3">
+      <div class="flex items-center justify-between gap-3">
+        <!-- Brand Signature -->
+        <a href="#hero" class="flex items-center gap-3 group focus:outline-none">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-b from-champagne-400/20 to-champagne-400/5 border border-champagne-400/40 flex items-center justify-center text-base font-serif italic font-bold text-champagne-300 shadow-inner group-hover:border-champagne-300 transition">
+            N
+          </div>
+          <div class="flex flex-col">
+            <div class="flex items-baseline gap-2">
+              <h1 class="text-lg sm:text-xl font-serif font-bold tracking-tight text-white leading-none">
+                Mariana <span class="italic font-normal text-champagne-300">“Nita”</span>
+              </h1>
+              <span class="px-2 py-0.5 rounded-md bg-champagne-400/10 border border-champagne-400/25 text-[10px] font-mono uppercase tracking-widest text-champagne-300">
+                29 Oct
+              </span>
+            </div>
+            <p class="text-[10px] uppercase tracking-[0.18em] text-neutral-400 font-medium mt-1" id="header-subtitle">
+              Celebración de Cumpleaños
+            </p>
+          </div>
+        </a>
+
+        <!-- Organizer Controls -->
+        <div class="flex items-center gap-1.5">
+          <button class="px-3 py-1.5 rounded-full btn-secondary text-[11px] font-medium transition flex items-center gap-1.5" id="toggle-edit-mode-btn" type="button">
+            <span id="edit-mode-label">Administrar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Segmented Navigation Pills -->
+      <nav aria-label="Secciones" class="flex items-center justify-between p-1 bg-black/55 rounded-full border border-white/10 text-[11px] font-medium overflow-x-auto no-scrollbar">
+        <a class="nav-pill px-3.5 py-1.5 rounded-full bg-champagne-400 text-midnight font-semibold transition-all whitespace-nowrap" data-section="hero" href="#hero">
+          Inicio
+        </a>
+        <a class="nav-pill px-3.5 py-1.5 rounded-full text-neutral-300 hover:text-white hover:bg-white/5 transition-all whitespace-nowrap" data-section="musica" href="#musica">
+          Música
+        </a>
+        <a class="nav-pill px-3.5 py-1.5 rounded-full text-neutral-300 hover:text-white hover:bg-white/5 transition-all whitespace-nowrap" data-section="galeria" href="#galeria">
+          Recuerdos
+        </a>
+        <a class="nav-pill px-3.5 py-1.5 rounded-full text-neutral-300 hover:text-white hover:bg-white/5 transition-all whitespace-nowrap" data-section="muro" href="#muro">
+          Dedicatorias
+        </a>
+        <a class="nav-pill px-3.5 py-1.5 rounded-full text-neutral-300 hover:text-white hover:bg-white/5 transition-all whitespace-nowrap" data-section="formulario-recuerdo" href="#formulario-recuerdo">
+          Publicar
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Admin Mode Banner (Hidden by default) -->
+  <div class="hidden bg-neutral-900 border-b border-champagne-400/30 px-4 py-2.5 text-xs text-champagne-200" id="edit-mode-banner">
+    <div class="max-w-xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <span>Modo administrador activo: puedes subir las canciones del reproductor, cambiar fotos o eliminar publicaciones.</span>
+      <button class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/15 text-[11px] text-neutral-200 font-medium transition" id="reset-demo-data-btn" type="button">
+        Vaciar todo
+      </button>
+    </div>
+  </div>
+
+  <main class="max-w-xl mx-auto px-4 pt-6 space-y-10 relative z-10">
+
+    <!-- BEGIN: HeroCelebrationSection -->
+    <section class="relative" data-purpose="hero-celebration" id="hero">
+      <div class="glass-panel rounded-3xl p-6 sm:p-8 text-center shadow-glass">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/5 border border-champagne-400/25 text-[10px] font-semibold tracking-widest uppercase text-champagne-300 mb-5">
+          <span id="hero-badge-text">29 de Octubre</span>
+        </div>
+
+        <h2 class="text-3xl sm:text-4xl font-serif font-bold tracking-tight leading-[1.15] mb-3 text-white">
+          Feliz Cumpleaños,<br/>
+          <span class="champagne-text font-serif italic font-bold text-4xl sm:text-5xl block mt-1" id="hero-recipient-name">Mariana (“Nita”)</span>
+        </h2>
+
+        <p class="text-xs sm:text-sm text-neutral-300 font-light leading-relaxed max-w-md mx-auto mb-6" id="hero-description">
+          Un espacio creado por el grupo para reunir nuestras mejores fotos, recuerdos de rumba y buenos deseos en tu cumpleaños.
+        </p>
+
+        <!-- Countdown Timer -->
+        <div class="bg-black/40 rounded-2xl p-4 border border-white/10 mb-6" id="countdown-wrapper">
+          <div class="flex items-center justify-between mb-2.5 px-1">
+            <p class="text-[10px] uppercase tracking-widest text-neutral-400 font-semibold" id="countdown-label">
+              Cuenta regresiva • 29 de Octubre
+            </p>
+            <span class="text-[10px] font-mono text-champagne-300" id="countdown-status-badge">En curso</span>
+          </div>
+          <div class="grid grid-cols-4 gap-2 text-center" id="countdown-timer">
+            <div class="bg-white/[0.03] rounded-xl p-2.5 border border-white/10">
+              <span class="block text-xl sm:text-2xl font-mono font-bold text-champagne-300 tracking-tight" id="count-days">05</span>
+              <span class="block text-[9px] uppercase tracking-wider text-neutral-400 font-medium mt-0.5">Días</span>
+            </div>
+            <div class="bg-white/[0.03] rounded-xl p-2.5 border border-white/10">
+              <span class="block text-xl sm:text-2xl font-mono font-bold text-white tracking-tight" id="count-hours">02</span>
+              <span class="block text-[9px] uppercase tracking-wider text-neutral-400 font-medium mt-0.5">Horas</span>
+            </div>
+            <div class="bg-white/[0.03] rounded-xl p-2.5 border border-white/10">
+              <span class="block text-xl sm:text-2xl font-mono font-bold text-white tracking-tight" id="count-mins">38</span>
+              <span class="block text-[9px] uppercase tracking-wider text-neutral-400 font-medium mt-0.5">Min</span>
+            </div>
+            <div class="bg-white/[0.03] rounded-xl p-2.5 border border-white/10">
+              <span class="block text-xl sm:text-2xl font-mono font-bold text-champagne-400 tracking-tight" id="count-secs">00</span>
+              <span class="block text-[9px] uppercase tracking-wider text-neutral-400 font-medium mt-0.5">Seg</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Primary Actions -->
+        <div class="space-y-2.5">
+          <button class="w-full py-3 px-6 rounded-xl btn-primary font-sans font-semibold text-xs uppercase tracking-wider shadow-subtle flex items-center justify-center gap-2" id="spell-button" type="button">
+            <span>Celebrar a Nita</span>
+          </button>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <a class="w-full py-2.5 px-4 rounded-xl btn-secondary text-xs font-medium flex items-center justify-center" href="#formulario-recuerdo">
+              Subir foto o dedicatoria
+            </a>
+            <button class="w-full py-2.5 px-4 rounded-xl btn-secondary text-xs font-medium flex items-center justify-center" id="structure-modal-btn" type="button">
+              Guía de archivos y respaldo
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- END: HeroCelebrationSection -->
+
+    <!-- BEGIN: AudioPlayerSection -->
+    <section class="space-y-3" data-purpose="music-player" id="musica">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-serif font-bold text-white tracking-wide">Reproductor Musical</h3>
+          <p class="text-[11px] text-neutral-400">Playlist seleccionada para la celebración</p>
+        </div>
+        <button aria-label="Silenciar o activar sonido" class="px-3 py-1 rounded-full btn-secondary text-[11px] font-medium flex items-center gap-1.5" id="audio-mute-btn" type="button">
+          <svg class="w-3.5 h-3.5" fill="none" id="audio-mute-icon" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path d="M11 5L6 9H2v6h4l5 4V5z" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M15.54 8.46a5 5 0 010 7.07" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <span id="audio-mute-label">Sonido</span>
+        </button>
+      </div>
+
+      <!-- Compact Audio Card -->
+      <div class="glass-panel rounded-3xl p-5 relative overflow-hidden shadow-glass" id="player-card-container">
+        <div class="flex items-center gap-3.5 mb-4">
+          <!-- Vinyl Disc -->
+          <div class="relative w-14 h-14 rounded-full bg-neutral-900 p-0.5 border border-champagne-400/30 shadow-md flex-shrink-0 flex items-center justify-center vinyl-spin" id="vinyl-disc">
+            <div class="w-5 h-5 rounded-full bg-champagne-400/20 border border-champagne-400/50 flex items-center justify-center text-[9px] font-mono text-champagne-300" id="vinyl-center-icon">
+              LP
+            </div>
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1.5 mb-0.5">
+              <span class="inline-block px-2 py-0.5 rounded bg-white/5 text-champagne-300 text-[9px] font-semibold uppercase tracking-wider" id="player-status-badge">Sin pistas</span>
+              <span class="text-[9px] font-mono text-neutral-400" id="player-source-badge"></span>
+            </div>
+            <h4 class="text-sm font-semibold text-white truncate" id="current-track-title">Reproductor listo para cargar música</h4>
+            <p class="text-[11px] text-neutral-400 truncate" id="current-track-artist">Agrega tus pistas MP3 para activar la lista</p>
+          </div>
+
+          <!-- Waveform Visualizer -->
+          <div class="flex items-end gap-1 h-6 px-2">
+            <span class="w-1 bg-champagne-400 rounded-full wave-bar"></span>
+            <span class="w-1 bg-champagne-300 rounded-full wave-bar"></span>
+            <span class="w-1 bg-champagne-400 rounded-full wave-bar"></span>
+            <span class="w-1 bg-champagne-300 rounded-full wave-bar"></span>
+            <span class="w-1 bg-champagne-400 rounded-full wave-bar"></span>
+          </div>
+        </div>
+
+        <!-- Controls: Prev, Play, Next -->
+        <div class="flex items-center justify-center gap-5 my-3">
+          <button aria-label="Pista anterior" class="w-10 h-10 rounded-full btn-secondary flex items-center justify-center disabled:opacity-40" id="audio-prev-btn" type="button">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"></path></svg>
+          </button>
+          <button aria-label="Reproducir o pausar" class="w-12 h-12 rounded-full btn-primary shadow-subtle flex items-center justify-center disabled:opacity-40" id="audio-play-trigger" type="button">
+            <svg class="w-5 h-5 fill-current" id="play-icon-svg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+          </button>
+          <button aria-label="Siguiente pista" class="w-10 h-10 rounded-full btn-secondary flex items-center justify-center disabled:opacity-40" id="audio-next-btn" type="button">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path></svg>
+          </button>
+        </div>
+
+        <!-- Scrubber Progress Bar -->
+        <div class="space-y-1.5 mt-2">
+          <div class="relative w-full h-1.5 bg-white/10 rounded-full overflow-hidden cursor-pointer" id="audio-scrubber-bar">
+            <div class="absolute top-0 left-0 h-full w-0 bg-champagne-400 rounded-full transition-all duration-150" id="audio-progress-fill"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-neutral-400 font-mono">
+            <span id="audio-time-current">00:00</span>
+            <span id="audio-time-total">00:00</span>
+          </div>
+        </div>
+
+        <!-- Track List -->
+        <div class="mt-4 pt-3 border-t border-white/10">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[10px] uppercase font-semibold tracking-widest text-neutral-400">Lista de reproducción</p>
+            <span class="text-[10px] text-neutral-400 font-mono" id="playlist-count-badge">0 pistas</span>
+          </div>
+          <div class="space-y-1.5 max-h-52 overflow-y-auto pr-1" id="playlist-tracks-container">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Organizer Upload Audio Action -->
+        <button class="mt-3.5 w-full py-2.5 px-3 rounded-xl btn-secondary text-xs font-medium flex items-center justify-center gap-2" id="upload-mp3-btn" type="button">
+          <svg class="w-4 h-4 text-champagne-300" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <span>Cargar pistas MP3 (Organizador)</span>
+        </button>
+      </div>
+    </section>
+    <!-- END: AudioPlayerSection -->
+
+    <!-- BEGIN: PolaroidGallerySection -->
+    <section class="space-y-4" data-purpose="polaroid-gallery" id="galeria">
+      <div class="space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <h3 class="text-lg font-serif font-bold text-white tracking-wide">Galería Polaroid de Recuerdos</h3>
+            <p class="text-[11px] text-neutral-400">Fotos subidas por los amigos de Nita</p>
+          </div>
+          <span class="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono text-champagne-300 whitespace-nowrap" id="gallery-count-badge">
+            0 recuerdos
+          </span>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-[11px] font-medium" id="gallery-filters-bar">
+          <button class="gallery-filter-btn px-3.5 py-1.5 rounded-full bg-champagne-400 text-midnight font-semibold whitespace-nowrap transition" data-filter="all" type="button">
+            Todas
+          </button>
+          <button class="gallery-filter-btn px-3.5 py-1.5 rounded-full btn-secondary whitespace-nowrap transition" data-filter="rumba" type="button">
+            La Rumba
+          </button>
+          <button class="gallery-filter-btn px-3.5 py-1.5 rounded-full btn-secondary whitespace-nowrap transition" data-filter="grupo" type="button">
+            El Grupo
+          </button>
+          <button class="gallery-filter-btn px-3.5 py-1.5 rounded-full btn-secondary whitespace-nowrap transition" data-filter="brindis" type="button">
+            Brindis, Tomaderas y Locuras
+          </button>
+        </div>
+      </div>
+
+      <!-- Cards Container -->
+      <div class="space-y-6" id="gallery-cards-container">
+        <!-- Dynamically rendered by JS -->
+      </div>
+    </section>
+    <!-- END: PolaroidGallerySection -->
+
+    <!-- BEGIN: WishesWallSection -->
+    <section class="space-y-4" data-purpose="guestbook-wall" id="muro">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-serif font-bold text-white tracking-wide">Muro de Dedicatorias</h3>
+          <p class="text-[11px] text-neutral-400">Mensajes y buenos deseos para Mariana</p>
+        </div>
+        <span class="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono text-champagne-300 whitespace-nowrap" id="wishes-count-badge">
+          0 dedicatorias
+        </span>
+      </div>
+
+      <!-- Dedication Cards Container -->
+      <div class="space-y-3.5" id="wishes-cards-container">
+        <!-- Dynamically rendered by JS -->
+      </div>
+    </section>
+    <!-- END: WishesWallSection -->
+
+    <!-- BEGIN: InteractiveFormsSection -->
+    <section class="space-y-6 pt-2" data-purpose="interactive-forms" id="formulario-recuerdo">
+      <!-- Form 1: Add Polaroid Photo -->
+      <div class="glass-panel rounded-3xl p-5 sm:p-6 relative overflow-hidden shadow-glass">
+        <div class="mb-4">
+          <span class="text-[10px] uppercase font-semibold tracking-widest text-champagne-300 mb-1 block">Participa en la galería</span>
+          <h4 class="text-base sm:text-lg font-serif font-bold text-white">1. Subir una foto Polaroid</h4>
+          <p class="text-xs text-neutral-400 font-light mt-0.5">Elige una foto desde tu teléfono, selecciona la categoría y deja el recuerdo escrito en el borde Polaroid.</p>
+        </div>
+
+        <form class="space-y-3.5" id="add-memory-form">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[10px] font-semibold text-neutral-300 uppercase tracking-wider mb-1" for="memory-author-input">Tu nombre o apodo *</label>
+              <input class="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-xs text-white placeholder-neutral-500 focus:border-champagne-400 focus:ring-1 focus:ring-champagne-400 transition outline-none" id="memory-author-input" placeholder="Ej. Andrea" required type="text"/>
+            </div>
+            <div>
+              <label class="block text-[10px] font-semibold text-neutral-300 uppercase tracking-wider mb-1" for="memory-date-input">Fecha o lugar</label>
+              <input class="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-xs text-white placeholder-neutral-500 focus:border-champagne-400 focus:ring-1 focus:ring-champagne-400 transition outline-none" id="memory-date-input" placeholder="Ej. Octubre 2025" type="text"/>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[10px] font-semibold text-neutral-300 uppercase tracking-wider mb-1" for="memory-title-input">Título del recuerdo *</label>
+              <input class="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-xs text-white placeholder-neutral-500 focus:border-champagne-400 focus:ring-1 focus:ring-champagne-400 transition outline-none" id="memory-title-input" placeholder="Ej. Noche inolvidable" required type="text"/>
+            </div>
+            <div>
+              <label class="block text-[10px] font-semibold text-neutral-300 uppercase tracking-wider mb-1" for="memory-category-select">Categoría</label>
+              <select class="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-xs text-neutral-200 focus:border-champagne-400 focus:ring-1 focus:ring-champagne-400 transition outline-none" id="memory-category-select">
+                <option value="rumba">La Rumba</option>
+                <option value="grupo">El Grupo</option>
+                <option value="brindis">Brindis, Tomaderas y Locuras</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Photo Upload Dropzone with Live Preview -->
+          <div>
+            <label class="block text-[10px] font-semibold text-neutral-300 uppercase tracking-wider mb-1">Foto para la Polaroid *</label>
+            <input accept="image/*" class="hidden" id="memory-photo-input" type="file"/>
+            <div class="border border-dashed border-white/20 rounded-2xl p-4 text-center hover:border-champagne-400/60 bg-white/[0.02] transition cursor-pointer flex flex-col items-center justify-center gap-1.5" id="memory-photo-dropzone">
+              <div class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-champagne-300" id="photo-dropzone-icon">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </div>
+              <span class="text-xs font-medium text-neutral-200" id="photo-dropzone-text">Seleccionar foto desde tu teléfono o PC</span>
+              <span class="text-[10px] text-neutral-400">Se enmarcará automáticamente en formato Polaroid</span>
+              <img alt="Vista previa" class="hidden mt-2 w-28 h-28 object-cover rounded-lg border border-white/20 shadow-md" id="memory-photo-preview"/>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-semibold text-neutral-300 uppercase tracking-wider mb-1" for="memory-story-input">Nota o anécdota de la foto</label>
+            <textarea class="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-xs text-white placeholder-neutral-500 focus:border-champagne-400 focus:ring-1 focus:ring-champagne-400 transition outline-none" id="memory-story-input" placeholder="Escribe la historia detrás de esta foto..." rows="2"></textarea>
+          </div>
+
+          <!-- Ambient 30s Song Selector & Trimmer for this Polaroid -->
+          <div class="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="block text-[10px] font-semibold text-champagne-300 uppercase tracking-wider" for="memory-song-input">Música para ambientar la foto (Fragmento de 30s)</label>
+              <span class="text-[10px] font-mono text-neutral-400">Independiente del reproductor</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <input class="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder-neutral-500 focus:border-champagne-400 focus:ring-1 focus:ring-champagne-400 transition outline-none" id="memory-song-input" placeholder="Título / Artista (ej. Golden - Harry Styles)" type="text"/>
+              </div>
+              <div>
+                <input accept="audio/*" class="hidden" id="memory-audio-input" type="file"/>
+                <button class="w-full px-3 py-2 rounded-xl btn-secondary text-xs font-medium flex items-center justify-center gap-2 truncate" id="memory-audio-btn" type="button">
+                  <svg class="w-3.5 h-3.5 text-champagne-300 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                  <span class="truncate" id="memory-audio-label">Subir MP3 para esta foto</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Interactive 30-Second Trimmer (Revealed when an MP3 is selected) -->
+            <div class="hidden pt-2 border-t border-white/10 space-y-2.5" id="audio-trimmer-panel">
+              <div class="flex items-center justify-between text-[11px]">
+                <span class="text-neutral-300 font-medium">Recortar fragmento de 30 segundos:</span>
+                <span class="font-mono text-champagne-300 font-semibold" id="trim-range-display">00:00 — 00:30 (30s)</span>
+              </div>
+
+              <!-- Visual 30s Window Bar -->
+              <div class="relative w-full h-2.5 bg-white/10 rounded-full overflow-hidden">
+                <div class="absolute top-0 h-full bg-champagne-400/70 rounded-full transition-all duration-75" id="trim-window-bar" style="left: 0%; width: 25%;"></div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <input class="w-full accent-[#d4a86a] cursor-pointer" id="trim-start-slider" max="180" min="0" step="1" type="range" value="0"/>
+                <button class="px-3 py-1.5 rounded-xl bg-champagne-400/15 hover:bg-champagne-400/25 border border-champagne-400/40 text-champagne-200 text-[11px] font-semibold whitespace-nowrap transition flex items-center gap-1.5" id="trim-preview-btn" type="button">
+                  <svg class="w-3 h-3 fill-current" id="trim-preview-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                  <span id="trim-preview-label">Escuchar 30s</span>
+                </button>
+              </div>
+              <p class="text-[10px] text-neutral-400">Desliza la barra para elegir el momento exacto donde inicia el recorte de 30 segundos.</p>
+            </div>
+          </div>
+
+          <button class="w-full py-3 px-4 rounded-xl btn-primary font-sans font-semibold text-xs uppercase tracking-wider shadow-subtle flex items-center justify-center" id="submit-memory-btn" type="submit">
+            Publicar foto en la galería
+          </button>
+        </form>
+      </div>
+
+      <!-- Form 2: Add Dedication to Wishes Wall -->
+      <div class="glass-panel rounded-3xl p-5 sm:p-6 relative overflow-hidden shadow-glass">
+        <div class="mb-3.5">
+          <span class="text-[10px] uppercase font-semibold tracking-widest text-champagne-300 mb-1 block">Muro de mensajes</span>
+          <h4 class="text-base sm:text-lg font-serif font-bold text-white">2. Escribir una dedicatoria</h4>
+          <p class="text-xs text-neutral-400 font-light mt-0.5">Deja tus palabras y buenos deseos para Mariana en su cumpleaños.</p>
+        </div>
+        <form class="space-y-3" id="add-wish-form">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <input class="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-xs text-white placeholder-neutral-500 focus:border-champagne-400 focus:ring-1 focus:ring-champagne-400 transition outline-none" id="wish-name-input" placeholder="Tu nombre (ej. Andrea) *" required type="text"/>
+            </div>
+            <div>
+              <input class="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-xs text-white placeholder-neutral-500 focus:border-champagne-400 focus:ring-1 focus:ring-champagne-400 transition outline-none" id="wish-role-input" placeholder="Relación o apodo (ej. Amiga de toda la vida)" type="text"/>
+            </div>
+          </div>
+          <div>
+            <textarea class="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-xs text-white placeholder-neutral-500 focus:border-champagne-400 focus:ring-1 focus:ring-champagne-400 transition outline-none" id="wish-message-input" placeholder="Escribe aquí tu mensaje para Mariana (Nita)... *" required rows="3"></textarea>
+          </div>
+          <button class="w-full py-3 px-4 rounded-xl btn-primary font-sans font-semibold text-xs uppercase tracking-wider shadow-subtle flex items-center justify-center" id="submit-wish-btn" type="submit">
+            Publicar dedicatoria
+          </button>
+        </form>
+      </div>
+    </section>
+    <!-- END: InteractiveFormsSection -->
+
+    <!-- BEGIN: ClosingDedicationSection -->
+    <section class="pt-2" data-purpose="closing-dedication" id="dedicatoria-final">
+      <div class="glass-panel rounded-3xl p-6 sm:p-7 relative overflow-hidden shadow-glass text-center">
+        <span class="text-[10px] uppercase font-semibold tracking-widest text-champagne-300 mb-2 block">Homenaje del grupo</span>
+        <h3 class="text-2xl font-serif font-bold text-white mb-3">Gracias por ser el corazón de cada encuentro</h3>
+        <div class="space-y-3 text-xs sm:text-sm text-neutral-300 font-light leading-relaxed max-w-md mx-auto">
+          <p>Esta página reúne los momentos compartidos, las canciones de siempre y el cariño de quienes celebramos tu vida hoy.</p>
+          <p class="font-serif italic text-champagne-200 text-base pt-1">
+            “Que este nuevo año traiga grandes historias, música inolvidable y muchos motivos para brindar juntos.”
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-center">
+          <span class="text-xs font-serif font-semibold text-neutral-300 tracking-widest uppercase">Tus amigos de siempre</span>
+        </div>
+      </div>
+    </section>
+    <!-- END: ClosingDedicationSection -->
+
+    <!-- Footer -->
+    <footer class="pt-8 pb-4 text-center border-t border-white/10 space-y-1.5">
+      <div class="text-champagne-300 font-serif italic text-base">
+        Celebración de Mariana “Nita”
+      </div>
+      <p class="text-[10px] text-neutral-500 tracking-widest uppercase font-medium">29 de Octubre</p>
+    </footer>
+  </main>
+
+  <!-- Floating Confetti Trigger Button -->
+  <aside class="fixed bottom-6 right-6 z-30" data-purpose="floating-magic-button">
+    <button aria-label="Celebrar" class="w-12 h-12 rounded-full bg-obsidian border border-champagne-400/40 shadow-subtle flex items-center justify-center text-champagne-300 hover:border-champagne-300 active:scale-95 transition-all" id="floating-magic-trigger" type="button">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </button>
+  </aside>
+
+  <!-- Lightbox Modal for Polaroids -->
+  <div aria-hidden="true" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 backdrop-blur-md p-4" id="lightbox-modal">
+    <div class="polaroid-card rounded-2xl p-4 sm:p-5 max-w-md w-full text-zinc-900 relative shadow-2xl">
+      <button aria-label="Cerrar vista ampliada" class="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-midnight text-champagne-300 border border-white/20 flex items-center justify-center text-xs font-bold shadow-lg hover:scale-105 transition" id="close-lightbox-btn" type="button">✕</button>
+      <div class="w-full aspect-[4/3] rounded-xl overflow-hidden bg-neutral-900 mb-4 flex items-center justify-center" id="lightbox-visual-box"></div>
+      <div class="px-1 space-y-1.5">
+        <div class="flex items-baseline justify-between gap-2">
+          <h4 class="font-serif font-bold text-xl text-zinc-900" id="lightbox-title">Recuerdo</h4>
+          <span class="text-xs font-medium text-zinc-500" id="lightbox-meta">Fecha</span>
+        </div>
+        <p class="text-xs text-zinc-700 leading-relaxed" id="lightbox-story"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modular Structure & Publishing Modal -->
+  <div aria-hidden="true" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 backdrop-blur-md p-4 overflow-y-auto" id="structure-modal">
+    <div class="glass-panel rounded-3xl p-6 max-w-lg w-full text-slate-100 border border-white/15 shadow-2xl space-y-4 my-8">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <h3 class="text-lg font-serif font-bold text-white">Guía de Música, Fotos y Respaldo</h3>
+        <button aria-label="Cerrar ventana" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-xs" id="close-structure-modal-btn" type="button">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs text-neutral-300 leading-relaxed">
+        <div class="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-1.5">
+          <p class="font-semibold text-champagne-300">1. Cómo dejar fijas tus canciones MP3</p>
+          <p>Puedes cargar tus canciones al instante con el botón <strong>Cargar pistas MP3 (Organizador)</strong> o dejarlas fijas en el arreglo <code>PLAYLIST_OFICIAL</code> al inicio del bloque <code>&lt;script&gt;</code> colocando la ruta de tus archivos (por ejemplo, <code>assets/audio/tema1.mp3</code>).</p>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-1.5">
+          <p class="font-semibold text-champagne-300">2. Fotos con su propio recorte musical de 30 segundos</p>
+          <p>Al subir una foto Polaroid, se puede adjuntar cualquier archivo MP3 y elegir con el deslizador qué fragmento exacto de 30 segundos sonará debajo de la foto. Ese mini-reproductor es totalmente independiente del reproductor principal.</p>
+          <div class="flex flex-wrap gap-2 pt-2">
+            <button class="px-3.5 py-2 rounded-xl btn-primary font-semibold text-xs transition" id="export-json-btn" type="button">
+              Descargar respaldo (.json)
+            </button>
+            <button class="px-3.5 py-2 rounded-xl btn-secondary font-medium text-xs transition" id="import-json-btn" type="button">
+              Cargar respaldo (.json)
+            </button>
+            <input accept=".json" class="hidden" id="import-json-input" type="file"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 -translate-y-2 transition-all duration-300" id="toast-notification">
+    <div class="px-4 py-2 rounded-full bg-obsidian border border-champagne-400/40 shadow-subtle text-xs font-medium text-champagne-200 flex items-center gap-2">
+      <span class="w-1.5 h-1.5 rounded-full bg-champagne-400" id="toast-icon"></span>
+      <span id="toast-message">Listo</span>
+    </div>
+  </div>
+
+  <!-- Fullscreen Confetti Canvas -->
+  <canvas class="fixed inset-0 pointer-events-none z-50" id="confetti-canvas"></canvas>
+
+  <!-- Interactive Application Script -->
+  <script>
+    (function initNitaApp() {
+      const STORAGE_KEY = 'nita_celebration_clean_v2';
+
+      /*
+       * PLAYLIST_OFICIAL:
+       * Cuando tengas los archivos MP3 definitivos en tu carpeta del proyecto,
+       * puedes agregarlos aquí para que carguen de fábrica, por ejemplo:
+       * { id: 'pista-1', title: 'Nombre de la Canción', artist: 'Artista', duration: 210, audioUrl: 'assets/audio/cancion1.mp3' }
+       */
+      const PLAYLIST_OFICIAL = [];
+
+      let state = {
+        editMode: false,
+        activeFilter: 'all',
+        tracks: structuredClone(PLAYLIST_OFICIAL),
+        memories: [],
+        wishes: [],
+        currentTrackIndex: 0,
+        isPlaying: false,
+        isMuted: false,
+        currentTime: 0,
+        pendingPhotoData: null,
+        pendingCardAudioUrl: null,
+        pendingCardAudioName: '',
+        pendingCardAudioDuration: 0,
+        pendingClipStart: 0,
+        pendingClipDuration: 30,
+        activeCardId: null,
+        isCardPlaying: false,
+        cardCurrentTime: 0,
+        replacingCardId: null
+      };
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          const saved = JSON.parse(raw);
+          if (saved) {
+            if (Array.isArray(saved.memories)) state.memories = saved.memories;
+            if (Array.isArray(saved.wishes)) state.wishes = saved.wishes;
+          }
+        } catch (err) {
+          // Ignore storage errors
+        }
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify({
+              memories: state.memories,
+              wishes: state.wishes
+            })
+          );
+        } catch (err) {
+          // Ignore storage quota errors
+        }
+      }
+
+      // Toast notification
+      let toastTimeout = null;
+      function showToast(message) {
+        const toastEl = document.getElementById('toast-notification');
+        const msgEl = document.getElementById('toast-message');
+        if (!toastEl || !msgEl) return;
+        msgEl.textContent = message;
+        toastEl.classList.remove('opacity-0', '-translate-y-2');
+        toastEl.classList.add('opacity-100', 'translate-y-0');
+        if (toastTimeout) clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+          toastEl.classList.remove('opacity-100', 'translate-y-0');
+          toastEl.classList.add('opacity-0', '-translate-y-2');
+        }, 2600);
+      }
+
+      // Subtle Champagne Confetti
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      let confettiFrame = null;
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      const confettiColors = ['#d4a86a', '#e5cb99', '#f3e5c8', '#ffffff', '#8c6d3f'];
+
+      function createBurst(x, y) {
+        for (let i = 0; i < 55; i++) {
+          particles.push({
+            x: x || canvas.width / 2,
+            y: y || canvas.height / 2,
+            size: Math.random() * 6 + 3,
+            color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+            vx: (Math.random() - 0.5) * 11,
+            vy: (Math.random() - 0.8) * 12,
+            rotation: Math.random() * 360,
+            vRot: (Math.random() - 0.5) * 9,
+            opacity: 1
+          });
+        }
+        if (!confettiFrame) {
+          renderConfetti();
+        }
+      }
+
+      function renderConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.32;
+          p.rotation += p.vRot;
+          p.opacity -= 0.015;
+
+          ctx.save();
+          ctx.globalAlpha = Math.max(p.opacity, 0);
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          ctx.restore();
+
+          if (p.opacity <= 0) {
+            particles.splice(i, 1);
+          }
+        }
+        if (particles.length > 0) {
+          confettiFrame = requestAnimationFrame(renderConfetti);
+        } else {
+          confettiFrame = null;
+        }
+      }
+
+      // Countdown to October 29
+      function initCountdown() {
+        const dEl = document.getElementById('count-days');
+        const hEl = document.getElementById('count-hours');
+        const mEl = document.getElementById('count-mins');
+        const sEl = document.getElementById('count-secs');
+
+        function updateClock() {
+          const now = new Date();
+          let year = now.getFullYear();
+          let target = new Date(year, 9, 29, 21, 0, 0);
+          if (now.getTime() > target.getTime() + 86400000) {
+            target = new Date(year + 1, 9, 29, 21, 0, 0);
+          }
+          const diff = Math.max(0, target.getTime() - now.getTime());
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+          const mins = Math.floor((diff / 1000 / 60) % 60);
+          const secs = Math.floor((diff / 1000) % 60);
+
+          if (dEl) dEl.textContent = String(days).padStart(2, '0');
+          if (hEl) hEl.textContent = String(hours).padStart(2, '0');
+          if (mEl) mEl.textContent = String(mins).padStart(2, '0');
+          if (sEl) sEl.textContent = String(secs).padStart(2, '0');
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+      }
+
+      // HTML5 Audio Player for Organizer Tracks
+      let progressTimer = null;
+      const htmlAudio = new Audio();
+
+      function stopAudioTimers() {
+        if (progressTimer) {
+          clearInterval(progressTimer);
+          progressTimer = null;
+        }
+        htmlAudio.pause();
+      }
+
+      function formatSeconds(sec) {
+        const s = Math.max(0, Math.floor(sec || 0));
+        const mins = Math.floor(s / 60);
+        const rem = s % 60;
+        return String(mins).padStart(2, '0') + ':' + String(rem).padStart(2, '0');
+      }
+
+      // Independent Audio Instance for Polaroid 30-second Ambient Clips & Trimmer Preview
+      const cardAudio = new Audio();
+      const previewAudio = new Audio();
+      let cardTimer = null;
+      let previewTimer = null;
+      let isPreviewPlaying = false;
+
+      function stopPreviewAudio() {
+        if (previewTimer) {
+          clearInterval(previewTimer);
+          previewTimer = null;
+        }
+        previewAudio.pause();
+        isPreviewPlaying = false;
+        const prevLabel = document.getElementById('trim-preview-label');
+        const prevIcon = document.getElementById('trim-preview-icon');
+        if (prevLabel) prevLabel.textContent = 'Escuchar 30s';
+        if (prevIcon) prevIcon.innerHTML = '<path d="M8 5v14l11-7z"></path>';
+      }
+
+      function stopCardAudio() {
+        if (cardTimer) {
+          clearInterval(cardTimer);
+          cardTimer = null;
+        }
+        cardAudio.pause();
+        state.isCardPlaying = false;
+        state.activeCardId = null;
+        state.cardCurrentTime = 0;
+        updateAllCardMiniPlayers();
+      }
+
+      function toggleCardClip(memId) {
+        const mem = state.memories.find((m) => m.id === memId);
+        if (!mem || !mem.clipAudioUrl) {
+          showToast('Esta foto no tiene un fragmento MP3 asignado');
+          return;
+        }
+
+        // Stop trimmer preview if active
+        stopPreviewAudio();
+
+        // If this exact card is currently playing, pause it
+        if (state.activeCardId === memId && state.isCardPlaying) {
+          if (cardTimer) {
+            clearInterval(cardTimer);
+            cardTimer = null;
+          }
+          cardAudio.pause();
+          state.isCardPlaying = false;
+          updateAllCardMiniPlayers();
+          return;
+        }
+
+        // Pause the main playlist player so they never overlap
+        if (state.isPlaying) {
+          pausePlayback();
+        }
+
+        // Start playing this Polaroid's 30s clip
+        if (cardTimer) {
+          clearInterval(cardTimer);
+          cardTimer = null;
+        }
+
+        const clipStart = Number(mem.clipStart) || 0;
+        const clipLen = Number(mem.clipDuration) || 30;
+        const clipEnd = clipStart + clipLen;
+
+        if (state.activeCardId !== memId || cardAudio.src !== mem.clipAudioUrl) {
+          cardAudio.src = mem.clipAudioUrl;
+          cardAudio.currentTime = clipStart;
+          state.cardCurrentTime = 0;
+        } else {
+          // Resume within the 30s window or restart if at end
+          if (cardAudio.currentTime < clipStart || cardAudio.currentTime >= clipEnd - 0.2) {
+            cardAudio.currentTime = clipStart;
+            state.cardCurrentTime = 0;
+          }
+        }
+
+        state.activeCardId = memId;
+        state.isCardPlaying = true;
+        cardAudio.muted = state.isMuted;
+
+        cardAudio.play().catch(() => {
+          state.isCardPlaying = false;
+          updateAllCardMiniPlayers();
+          showToast('Pulsa nuevamente para reproducir el fragmento');
+        });
+
+        updateAllCardMiniPlayers();
+
+        cardTimer = setInterval(() => {
+          const elapsed = Math.max(0, cardAudio.currentTime - clipStart);
+          state.cardCurrentTime = Math.min(clipLen, elapsed);
+          updateAllCardMiniPlayers();
+
+          if (cardAudio.currentTime >= clipEnd || cardAudio.ended) {
+            stopCardAudio();
+          }
+        }, 120);
+      }
+
+      cardAudio.addEventListener('ended', () => {
+        stopCardAudio();
+      });
+
+      function updateAllCardMiniPlayers() {
+        document.querySelectorAll('[data-card-player]').forEach((wrap) => {
+          const mid = wrap.getAttribute('data-card-player');
+          const mem = state.memories.find((m) => m.id === mid);
+          if (!mem) return;
+          const clipLen = Number(mem.clipDuration) || 30;
+          const isActive = state.activeCardId === mid && state.isCardPlaying;
+          const elapsed = state.activeCardId === mid ? state.cardCurrentTime : 0;
+          const pct = Math.min(100, Math.max(0, (elapsed / clipLen) * 100));
+
+          const bar = wrap.querySelector('[data-card-clip-bar]');
+          const timeEl = wrap.querySelector('[data-card-clip-time]');
+          const btnSvg = wrap.querySelector('[data-card-clip-svg]');
+
+          if (bar) bar.style.width = pct.toFixed(1) + '%';
+          if (timeEl) timeEl.textContent = formatSeconds(elapsed) + ' / ' + formatSeconds(clipLen);
+          if (btnSvg) {
+            btnSvg.innerHTML = isActive
+              ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>'
+              : '<path d="M8 5v14l11-7z"></path>';
+          }
+        });
+      }
+
+      function startPlayback() {
+        if (!state.tracks.length) {
+          showToast('Aún no hay canciones cargadas en el reproductor');
+          return;
+        }
+        // Pause any Polaroid mini-player clip or trimmer preview when main player starts
+        stopCardAudio();
+        stopPreviewAudio();
+        stopAudioTimers();
+        const track = state.tracks[state.currentTrackIndex];
+        if (!track || !track.audioUrl) return;
+
+        state.isPlaying = true;
+        updatePlayerUI();
+
+        if (htmlAudio.src !== track.audioUrl) {
+          htmlAudio.src = track.audioUrl;
+        }
+        htmlAudio.muted = state.isMuted;
+        htmlAudio.currentTime = state.currentTime || 0;
+        htmlAudio.play().catch(() => {
+          state.isPlaying = false;
+          updatePlayerUI();
+          showToast('Pulsa reproducir nuevamente para iniciar el audio');
+        });
+
+        progressTimer = setInterval(() => {
+          if (!htmlAudio.paused) {
+            state.currentTime = htmlAudio.currentTime;
+            if (htmlAudio.duration && !isNaN(htmlAudio.duration)) {
+              track.duration = Math.floor(htmlAudio.duration);
+            }
+            updateScrubberUI();
+          }
+        }, 200);
+      }
+
+      htmlAudio.addEventListener('ended', () => {
+        state.currentTime = 0;
+        nextTrack();
+      });
+
+      function pausePlayback() {
+        state.isPlaying = false;
+        stopAudioTimers();
+        updatePlayerUI();
+      }
+
+      function togglePlayback() {
+        if (!state.tracks.length) {
+          const globalInput = document.getElementById('global-mp3-input');
+          if (globalInput) globalInput.click();
+          return;
+        }
+        if (state.isPlaying) {
+          pausePlayback();
+        } else {
+          startPlayback();
+        }
+      }
+
+      function selectTrackByIndex(idx, autoPlay) {
+        if (idx < 0 || idx >= state.tracks.length) return;
+        const sameTrack = state.currentTrackIndex === idx;
+        state.currentTrackIndex = idx;
+        if (!sameTrack) {
+          state.currentTime = 0;
+        }
+        if (autoPlay) {
+          startPlayback();
+        } else {
+          updatePlayerUI();
+        }
+      }
+
+      function nextTrack() {
+        if (!state.tracks.length) return;
+        const nextIdx = (state.currentTrackIndex + 1) % state.tracks.length;
+        selectTrackByIndex(nextIdx, state.isPlaying);
+      }
+
+      function prevTrack() {
+        if (!state.tracks.length) return;
+        const prevIdx = (state.currentTrackIndex - 1 + state.tracks.length) % state.tracks.length;
+        selectTrackByIndex(prevIdx, state.isPlaying);
+      }
+
+      function updateScrubberUI() {
+        const track = state.tracks[state.currentTrackIndex];
+        const fillEl = document.getElementById('audio-progress-fill');
+        const curEl = document.getElementById('audio-time-current');
+        const totEl = document.getElementById('audio-time-total');
+
+        if (!track) {
+          if (fillEl) fillEl.style.width = '0%';
+          if (curEl) curEl.textContent = '00:00';
+          if (totEl) totEl.textContent = '00:00';
+          return;
+        }
+
+        const dur = track.duration || 1;
+        const pct = Math.min(100, Math.max(0, (state.currentTime / dur) * 100));
+        if (fillEl) fillEl.style.width = pct.toFixed(1) + '%';
+        if (curEl) curEl.textContent = formatSeconds(state.currentTime);
+        if (totEl) totEl.textContent = formatSeconds(track.duration);
+      }
+
+      function updatePlayerUI() {
+        const hasTracks = state.tracks.length > 0;
+        const track = hasTracks ? state.tracks[state.currentTrackIndex] : null;
+        const container = document.getElementById('player-card-container');
+        const titleEl = document.getElementById('current-track-title');
+        const artistEl = document.getElementById('current-track-artist');
+        const statusEl = document.getElementById('player-status-badge');
+        const sourceEl = document.getElementById('player-source-badge');
+        const playSvg = document.getElementById('play-icon-svg');
+        const countBadge = document.getElementById('playlist-count-badge');
+        const prevBtn = document.getElementById('audio-prev-btn');
+        const nextBtn = document.getElementById('audio-next-btn');
+
+        if (container) {
+          container.classList.toggle('is-playing', state.isPlaying && hasTracks);
+        }
+        if (prevBtn) prevBtn.disabled = !hasTracks;
+        if (nextBtn) nextBtn.disabled = !hasTracks;
+
+        if (!hasTracks) {
+          if (titleEl) titleEl.textContent = 'Reproductor sin canciones cargadas';
+          if (artistEl) artistEl.textContent = 'Usa el botón inferior para cargar las pistas MP3 del evento';
+          if (statusEl) statusEl.textContent = 'Vacío';
+          if (sourceEl) sourceEl.textContent = '';
+          if (countBadge) countBadge.textContent = '0 pistas';
+        } else {
+          if (titleEl) titleEl.textContent = (state.currentTrackIndex + 1) + '. ' + track.title;
+          if (artistEl) artistEl.textContent = track.artist || 'Playlist Oficial';
+          if (statusEl) statusEl.textContent = state.isPlaying ? 'Reproduciendo' : 'En pausa';
+          if (sourceEl) sourceEl.textContent = '• Audio MP3';
+          if (countBadge) countBadge.textContent = state.tracks.length + (state.tracks.length === 1 ? ' pista' : ' pistas');
+        }
+
+        if (playSvg) {
+          playSvg.innerHTML = state.isPlaying
+            ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>'
+            : '<path d="M8 5v14l11-7z"></path>';
+        }
+
+        updateScrubberUI();
+        renderPlaylistTracks();
+      }
+
+      function renderPlaylistTracks() {
+        const listEl = document.getElementById('playlist-tracks-container');
+        if (!listEl) return;
+        listEl.innerHTML = '';
+
+        if (!state.tracks.length) {
+          const emptyDiv = document.createElement('div');
+          emptyDiv.className = 'py-4 px-3 rounded-xl bg-black/30 border border-white/5 text-center text-xs text-neutral-400';
+          emptyDiv.textContent = 'No hay pistas cargadas todavía.';
+          listEl.appendChild(emptyDiv);
+          return;
+        }
+
+        state.tracks.forEach((t, idx) => {
+          const isCurrent = idx === state.currentTrackIndex;
+          const row = document.createElement('div');
+          row.className = isCurrent
+            ? 'w-full px-3 py-2 rounded-xl bg-white/10 border border-champagne-400/40 text-xs font-semibold text-white flex items-center justify-between gap-2 transition'
+            : 'w-full px-3 py-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.07] border border-transparent text-xs font-normal text-neutral-300 flex items-center justify-between gap-2 transition';
+
+          const selectBtn = document.createElement('button');
+          selectBtn.type = 'button';
+          selectBtn.className = 'flex-1 text-left truncate flex items-center justify-between gap-2';
+          selectBtn.innerHTML = `
+            <span class="truncate">${idx + 1}. ${t.title}</span>
+            <span class="text-[10px] font-mono ${isCurrent ? 'text-champagne-300' : 'text-neutral-400'} whitespace-nowrap">
+              ${isCurrent && state.isPlaying ? 'Pausa' : 'Reproducir'} ${t.duration ? '• ' + formatSeconds(t.duration) : ''}
+            </span>
+          `;
+          selectBtn.addEventListener('click', () => {
+            if (isCurrent) {
+              togglePlayback();
+            } else {
+              selectTrackByIndex(idx, true);
+            }
+          });
+
+          row.appendChild(selectBtn);
+
+          if (state.editMode) {
+            const delBtn = document.createElement('button');
+            delBtn.type = 'button';
+            delBtn.className = 'text-[10px] px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-neutral-300';
+            delBtn.textContent = 'Quitar';
+            delBtn.addEventListener('click', () => {
+              state.tracks.splice(idx, 1);
+              if (state.currentTrackIndex >= state.tracks.length) {
+                state.currentTrackIndex = Math.max(0, state.tracks.length - 1);
+              }
+              if (!state.tracks.length) {
+                pausePlayback();
+              } else {
+                updatePlayerUI();
+              }
+            });
+            row.appendChild(delBtn);
+          }
+
+          listEl.appendChild(row);
+        });
+      }
+
+      // Category label helper
+      const categoryLabels = {
+        rumba: 'La Rumba',
+        grupo: 'El Grupo',
+        brindis: 'Brindis, Tomaderas y Locuras'
+      };
+
+      // Render Polaroid Gallery
+      function renderGallery() {
+        const container = document.getElementById('gallery-cards-container');
+        const badgeEl = document.getElementById('gallery-count-badge');
+        if (!container) return;
+
+        const filtered = state.memories.filter(
+          (m) => state.activeFilter === 'all' || m.category === state.activeFilter
+        );
+
+        if (badgeEl) {
+          badgeEl.textContent = filtered.length + (filtered.length === 1 ? ' recuerdo' : ' recuerdos');
+        }
+
+        container.innerHTML = '';
+
+        if (!filtered.length) {
+          const emptyCard = document.createElement('div');
+          emptyCard.className = 'glass-panel-subtle rounded-3xl p-8 text-center space-y-3';
+          emptyCard.innerHTML = `
+            <p class="text-sm font-serif text-neutral-200">Aún no se han subido fotos en esta categoría</p>
+            <p class="text-xs text-neutral-400 max-w-xs mx-auto">Sé el primero en compartir una foto en estilo Polaroid usando el formulario de abajo.</p>
+            <div class="pt-1">
+              <a href="#formulario-recuerdo" class="inline-block px-4 py-2 rounded-xl btn-secondary text-xs font-medium">
+                Subir primera foto
+              </a>
+            </div>
+          `;
+          container.appendChild(emptyCard);
+          return;
+        }
+
+        filtered.forEach((mem) => {
+          const article = document.createElement('article');
+          article.className = `polaroid-card rounded-2xl p-4 text-zinc-800 ${mem.rotation || ''} transition-all`;
+
+          const catBadge = categoryLabels[mem.category] || mem.badge || 'Recuerdo';
+
+          const visualInner = mem.imageData
+            ? `<img src="${mem.imageData}" alt="${mem.title}" class="absolute inset-0 w-full h-full object-cover"/>
+               <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent z-10"></div>`
+            : `<div class="absolute inset-0 bg-neutral-900 z-10 flex items-center justify-center p-6 text-center">
+                 <span class="font-serif italic text-lg text-champagne-200">${mem.title}</span>
+               </div>`;
+
+          const editControlsHtml = state.editMode
+            ? `<div class="mt-3 pt-2.5 border-t border-zinc-200 flex items-center justify-between gap-2 text-[11px]">
+                 <button type="button" data-replace-photo="${mem.id}" class="px-2.5 py-1 rounded-lg bg-zinc-200 hover:bg-zinc-300 text-zinc-800 font-medium transition">
+                   Cambiar foto
+                 </button>
+                 <button type="button" data-delete-memory="${mem.id}" class="px-2.5 py-1 rounded-lg bg-zinc-200 hover:bg-zinc-300 text-zinc-800 font-medium transition">
+                   Eliminar
+                 </button>
+               </div>`
+            : '';
+
+          article.innerHTML = `
+            <div data-open-lightbox="${mem.id}" class="cursor-pointer relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-neutral-900 p-4 flex flex-col justify-between text-white border border-black/10 group">
+              ${visualInner}
+              <div class="relative z-20 flex justify-between items-start">
+                <span class="px-2.5 py-0.5 rounded-full bg-black/50 backdrop-blur-md text-[10px] text-neutral-200">Ampliar</span>
+                <span class="px-2.5 py-1 rounded-full bg-black/65 backdrop-blur-md border border-white/15 text-[10px] font-medium text-champagne-200">${catBadge}</span>
+              </div>
+              <div class="relative z-20 text-left">
+                <p class="text-base font-serif font-bold text-white">${mem.title}</p>
+              </div>
+            </div>
+            <div class="pt-3.5 pb-1 px-1">
+              <div class="flex items-center justify-between mb-1.5">
+                <div>
+                  <h4 class="font-serif font-bold text-base text-zinc-900 leading-tight">${mem.author}</h4>
+                  <span class="text-[11px] font-sans text-zinc-500 font-medium">${mem.date}</span>
+                </div>
+                <button type="button" data-like-memory="${mem.id}" class="flex items-center gap-1.5 px-3 py-1 rounded-full ${mem.liked ? 'bg-zinc-900 text-champagne-300 border-zinc-900' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border-zinc-300'} border text-xs font-semibold transition">
+                  <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                  </svg>
+                  <span>${mem.likes}</span>
+                </button>
+              </div>
+              ${mem.story ? `<p class="text-xs text-zinc-700 font-sans leading-relaxed mt-1 mb-3">${mem.story}</p>` : '<div class="mb-2"></div>'}
+              ${mem.clipAudioUrl ? `
+                <div data-card-player="${mem.id}" class="mt-2.5 rounded-xl bg-midnight text-white p-2.5 border border-white/10 flex items-center gap-3 shadow-inner">
+                  <div class="w-9 h-9 rounded-lg bg-white/5 border border-champagne-400/30 flex items-center justify-center flex-shrink-0 text-champagne-300">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                      <path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-2">
+                      <p class="text-xs font-semibold text-white truncate">${mem.songTitle || 'Ambientación musical'}</p>
+                      <span data-card-clip-time class="text-[10px] font-mono text-champagne-300 whitespace-nowrap">00:00 / ${formatSeconds(mem.clipDuration || 30)}</span>
+                    </div>
+                    <div class="relative w-full h-1 bg-white/15 rounded-full overflow-hidden mt-1.5">
+                      <div data-card-clip-bar class="absolute top-0 left-0 h-full w-0 bg-champagne-400 rounded-full transition-all duration-100"></div>
+                    </div>
+                  </div>
+                  <button type="button" data-play-card-clip="${mem.id}" aria-label="Reproducir fragmento de la foto" class="w-8 h-8 rounded-full bg-champagne-400 hover:bg-champagne-300 text-midnight flex items-center justify-center flex-shrink-0 shadow transition">
+                    <svg data-card-clip-svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"></path>
+                    </svg>
+                  </button>
+                </div>
+              ` : ''}
+              ${editControlsHtml}
+            </div>
+          `;
+
+          container.appendChild(article);
+        });
+      }
+
+      // Render Wishes Wall
+      function renderWishes() {
+        const container = document.getElementById('wishes-cards-container');
+        const badgeEl = document.getElementById('wishes-count-badge');
+        if (!container) return;
+
+        if (badgeEl) {
+          badgeEl.textContent = state.wishes.length + (state.wishes.length === 1 ? ' dedicatoria' : ' dedicatorias');
+        }
+
+        container.innerHTML = '';
+
+        if (!state.wishes.length) {
+          const emptyWish = document.createElement('div');
+          emptyWish.className = 'glass-panel-subtle rounded-3xl p-8 text-center space-y-2';
+          emptyWish.innerHTML = `
+            <p class="text-sm font-serif text-neutral-200">El muro de dedicatorias está listo</p>
+            <p class="text-xs text-neutral-400 max-w-xs mx-auto">Escribe el primer mensaje de cumpleaños para Mariana en el formulario de abajo.</p>
+          `;
+          container.appendChild(emptyWish);
+          return;
+        }
+
+        state.wishes.forEach((w) => {
+          const initials = (w.name || 'A')
+            .split(' ')
+            .filter(Boolean)
+            .slice(0, 2)
+            .map((part) => part[0].toUpperCase())
+            .join('');
+
+          const card = document.createElement('div');
+          card.className = 'glass-panel rounded-2xl p-4 relative shadow-glass';
+          card.innerHTML = `
+            <div class="flex items-center justify-between gap-3 mb-2.5">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-white/5 border border-champagne-400/30 flex items-center justify-center text-xs font-serif font-bold text-champagne-300">
+                  ${initials}
+                </div>
+                <div>
+                  <h4 class="text-sm font-semibold text-white leading-tight">${w.name}</h4>
+                  <p class="text-[10px] font-medium text-neutral-400">${w.role || 'Amigo/a del grupo'}</p>
+                </div>
+              </div>
+              ${state.editMode ? `<button type="button" data-delete-wish="${w.id}" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-neutral-300">Eliminar</button>` : ''}
+            </div>
+            <p class="text-xs text-neutral-200 italic font-serif leading-relaxed mb-3 pl-3 border-l border-champagne-400/40">
+              ${w.message}
+            </p>
+            <div class="flex items-center justify-between pt-2 border-t border-white/5 text-[10px]">
+              <span class="text-neutral-500 font-medium">Para Mariana • 29 Oct</span>
+              <button type="button" data-react-wish="${w.id}" class="px-3 py-1 rounded-full ${w.reacted ? 'bg-champagne-400 text-midnight font-semibold' : 'btn-secondary'} transition flex items-center gap-1.5">
+                <span>Salud (${w.reactions})</span>
+              </button>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      }
+
+      // Delegated clicks for dynamic Polaroid & Wish cards
+      document.addEventListener('click', (e) => {
+        const clipBtn = e.target.closest('[data-play-card-clip]');
+        if (clipBtn) {
+          const memId = clipBtn.getAttribute('data-play-card-clip');
+          toggleCardClip(memId);
+          return;
+        }
+
+        const likeBtn = e.target.closest('[data-like-memory]');
+        if (likeBtn) {
+          const memId = likeBtn.getAttribute('data-like-memory');
+          const mem = state.memories.find((m) => m.id === memId);
+          if (mem) {
+            mem.liked = !mem.liked;
+            mem.likes += mem.liked ? 1 : -1;
+            saveState();
+            renderGallery();
+          }
+          return;
+        }
+
+        const openLightboxEl = e.target.closest('[data-open-lightbox]');
+        if (openLightboxEl) {
+          const memId = openLightboxEl.getAttribute('data-open-lightbox');
+          openLightbox(memId);
+          return;
+        }
+
+        const reactBtn = e.target.closest('[data-react-wish]');
+        if (reactBtn) {
+          const wishId = reactBtn.getAttribute('data-react-wish');
+          const wish = state.wishes.find((w) => w.id === wishId);
+          if (wish) {
+            wish.reacted = !wish.reacted;
+            wish.reactions += wish.reacted ? 1 : -1;
+            saveState();
+            renderWishes();
+          }
+          return;
+        }
+
+        const delMemBtn = e.target.closest('[data-delete-memory]');
+        if (delMemBtn) {
+          const memId = delMemBtn.getAttribute('data-delete-memory');
+          state.memories = state.memories.filter((m) => m.id !== memId);
+          saveState();
+          renderGallery();
+          showToast('Foto eliminada');
+          return;
+        }
+
+        const delWishBtn = e.target.closest('[data-delete-wish]');
+        if (delWishBtn) {
+          const wishId = delWishBtn.getAttribute('data-delete-wish');
+          state.wishes = state.wishes.filter((w) => w.id !== wishId);
+          saveState();
+          renderWishes();
+          showToast('Dedicatoria eliminada');
+          return;
+        }
+
+        const repPhotoBtn = e.target.closest('[data-replace-photo]');
+        if (repPhotoBtn) {
+          state.replacingCardId = repPhotoBtn.getAttribute('data-replace-photo');
+          const fileInput = document.getElementById('card-photo-replace-input');
+          if (fileInput) fileInput.click();
+        }
+      });
+
+      // Lightbox Modal
+      function openLightbox(memId) {
+        const mem = state.memories.find((m) => m.id === memId);
+        if (!mem) return;
+        const modal = document.getElementById('lightbox-modal');
+        const box = document.getElementById('lightbox-visual-box');
+        const titleEl = document.getElementById('lightbox-title');
+        const metaEl = document.getElementById('lightbox-meta');
+        const storyEl = document.getElementById('lightbox-story');
+
+        if (box) {
+          if (mem.imageData) {
+            box.innerHTML = `<img src="${mem.imageData}" alt="${mem.title}" class="w-full h-full object-cover"/>`;
+          } else {
+            box.innerHTML = `<span class="font-serif italic text-lg text-champagne-200 px-4 text-center">${mem.title}</span>`;
+          }
+        }
+        if (titleEl) titleEl.textContent = mem.title;
+        if (metaEl) metaEl.textContent = mem.author + ' • ' + mem.date;
+        if (storyEl) storyEl.textContent = mem.story || '';
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+        }
+      }
+
+      const closeLightboxBtn = document.getElementById('close-lightbox-btn');
+      if (closeLightboxBtn) {
+        closeLightboxBtn.addEventListener('click', () => {
+          const modal = document.getElementById('lightbox-modal');
+          if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+          }
+        });
+      }
+
+      // Wire Hero & Confetti Triggers
+      const spellBtn = document.getElementById('spell-button');
+      if (spellBtn) {
+        spellBtn.addEventListener('click', () => {
+          const rect = spellBtn.getBoundingClientRect();
+          createBurst(rect.left + rect.width / 2, rect.top + rect.height / 2);
+          showToast('Salud por Mariana en su cumpleaños');
+        });
+      }
+
+      const magicBtn = document.getElementById('floating-magic-trigger');
+      if (magicBtn) {
+        magicBtn.addEventListener('click', () => {
+          const rect = magicBtn.getBoundingClientRect();
+          createBurst(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        });
+      }
+
+      // Audio Player Controls
+      const playTrigger = document.getElementById('audio-play-trigger');
+      if (playTrigger) {
+        playTrigger.addEventListener('click', togglePlayback);
+      }
+
+      const prevBtn = document.getElementById('audio-prev-btn');
+      if (prevBtn) {
+        prevBtn.addEventListener('click', prevTrack);
+      }
+
+      const nextBtn = document.getElementById('audio-next-btn');
+      if (nextBtn) {
+        nextBtn.addEventListener('click', nextTrack);
+      }
+
+      const muteBtn = document.getElementById('audio-mute-btn');
+      if (muteBtn) {
+        muteBtn.addEventListener('click', () => {
+          state.isMuted = !state.isMuted;
+          htmlAudio.muted = state.isMuted;
+          cardAudio.muted = state.isMuted;
+          previewAudio.muted = state.isMuted;
+          const label = document.getElementById('audio-mute-label');
+          if (label) label.textContent = state.isMuted ? 'Silenciado' : 'Sonido';
+        });
+      }
+
+      const scrubberBar = document.getElementById('audio-scrubber-bar');
+      if (scrubberBar) {
+        scrubberBar.addEventListener('click', (e) => {
+          if (!state.tracks.length) return;
+          const rect = scrubberBar.getBoundingClientRect();
+          const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+          const track = state.tracks[state.currentTrackIndex];
+          if (!track) return;
+          state.currentTime = ratio * (track.duration || 180);
+          if (track.audioUrl && htmlAudio.src) {
+            htmlAudio.currentTime = state.currentTime;
+          }
+          updateScrubberUI();
+        });
+      }
+
+      // Organizer MP3 Upload
+      const uploadMp3Btn = document.getElementById('upload-mp3-btn');
+      const globalMp3Input = document.getElementById('global-mp3-input');
+      if (uploadMp3Btn && globalMp3Input) {
+        uploadMp3Btn.addEventListener('click', () => globalMp3Input.click());
+        globalMp3Input.addEventListener('change', (e) => {
+          const files = Array.from(e.target.files || []);
+          if (!files.length) return;
+          files.forEach((file, i) => {
+            const url = URL.createObjectURL(file);
+            const cleanName = file.name.replace(/\.[^/.]+$/, '');
+            state.tracks.push({
+              id: 'mp3-' + Date.now() + '-' + i,
+              title: cleanName,
+              artist: 'Playlist de la Celebración',
+              duration: 0,
+              audioUrl: url
+            });
+          });
+          selectTrackByIndex(state.tracks.length - files.length, true);
+          showToast(files.length + ' pista(s) agregada(s) al reproductor');
+        });
+      }
+
+      // Replace single card photo in Admin Mode
+      const cardPhotoInput = document.getElementById('card-photo-replace-input');
+      if (cardPhotoInput) {
+        cardPhotoInput.addEventListener('change', (e) => {
+          const file = (e.target.files || [])[0];
+          if (!file || !state.replacingCardId) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            const mem = state.memories.find((m) => m.id === state.replacingCardId);
+            if (mem) {
+              mem.imageData = reader.result;
+              saveState();
+              renderGallery();
+              showToast('Foto actualizada');
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // Category Filter Buttons
+      document.querySelectorAll('.gallery-filter-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.activeFilter = btn.getAttribute('data-filter') || 'all';
+          document.querySelectorAll('.gallery-filter-btn').forEach((b) => {
+            const active = b.getAttribute('data-filter') === state.activeFilter;
+            b.className = active
+              ? 'gallery-filter-btn px-3.5 py-1.5 rounded-full bg-champagne-400 text-midnight font-semibold whitespace-nowrap transition'
+              : 'gallery-filter-btn px-3.5 py-1.5 rounded-full btn-secondary whitespace-nowrap transition';
+          });
+          renderGallery();
+        });
+      });
+
+      // Toggle Admin Mode
+      const editModeBtn = document.getElementById('toggle-edit-mode-btn');
+      const editModeBanner = document.getElementById('edit-mode-banner');
+      const editModeLabel = document.getElementById('edit-mode-label');
+      if (editModeBtn) {
+        editModeBtn.addEventListener('click', () => {
+          state.editMode = !state.editMode;
+          if (editModeBanner) editModeBanner.classList.toggle('hidden', !state.editMode);
+          if (editModeLabel) editModeLabel.textContent = state.editMode ? 'Cerrar edición' : 'Administrar';
+          renderGallery();
+          renderWishes();
+          renderPlaylistTracks();
+        });
+      }
+
+      const resetDemoBtn = document.getElementById('reset-demo-data-btn');
+      if (resetDemoBtn) {
+        resetDemoBtn.addEventListener('click', () => {
+          state.memories = [];
+          state.wishes = [];
+          state.tracks = [];
+          pausePlayback();
+          saveState();
+          renderGallery();
+          renderWishes();
+          updatePlayerUI();
+          showToast('Galería, muro y reproductor vaciados');
+        });
+      }
+
+      // Form 1: Photo preview & Add New Polaroid Memory
+      const photoDropzone = document.getElementById('memory-photo-dropzone');
+      const photoInput = document.getElementById('memory-photo-input');
+      const photoPreview = document.getElementById('memory-photo-preview');
+      const photoDropzoneText = document.getElementById('photo-dropzone-text');
+
+      if (photoDropzone && photoInput) {
+        photoDropzone.addEventListener('click', () => photoInput.click());
+        photoInput.addEventListener('change', (e) => {
+          const file = (e.target.files || [])[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            state.pendingPhotoData = reader.result;
+            if (photoPreview) {
+              photoPreview.src = reader.result;
+              photoPreview.classList.remove('hidden');
+            }
+            if (photoDropzoneText) {
+              photoDropzoneText.textContent = 'Foto seleccionada: ' + file.name;
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // 30-Second MP3 Trimmer Controls for Polaroid Form
+      const memAudioBtn = document.getElementById('memory-audio-btn');
+      const memAudioInput = document.getElementById('memory-audio-input');
+      const memAudioLabel = document.getElementById('memory-audio-label');
+      const trimmerPanel = document.getElementById('audio-trimmer-panel');
+      const trimSlider = document.getElementById('trim-start-slider');
+      const trimRangeDisplay = document.getElementById('trim-range-display');
+      const trimWindowBar = document.getElementById('trim-window-bar');
+      const trimPreviewBtn = document.getElementById('trim-preview-btn');
+      const memSongInput = document.getElementById('memory-song-input');
+
+      function updateTrimmerUI() {
+        const total = state.pendingCardAudioDuration || 30;
+        const clipLen = Math.min(30, total);
+        const start = Math.min(state.pendingClipStart, Math.max(0, total - clipLen));
+        const end = start + clipLen;
+        state.pendingClipStart = start;
+        state.pendingClipDuration = clipLen;
+
+        if (trimRangeDisplay) {
+          trimRangeDisplay.textContent =
+            formatSeconds(start) + ' — ' + formatSeconds(end) + ' (' + Math.round(clipLen) + 's)';
+        }
+        if (trimWindowBar && total > 0) {
+          const leftPct = (start / total) * 100;
+          const widthPct = (clipLen / total) * 100;
+          trimWindowBar.style.left = leftPct.toFixed(1) + '%';
+          trimWindowBar.style.width = Math.max(4, widthPct).toFixed(1) + '%';
+        }
+      }
+
+      if (memAudioBtn && memAudioInput) {
+        memAudioBtn.addEventListener('click', () => memAudioInput.click());
+        memAudioInput.addEventListener('change', (e) => {
+          const file = (e.target.files || [])[0];
+          if (!file) return;
+          stopPreviewAudio();
+          const url = URL.createObjectURL(file);
+          const cleanName = file.name.replace(/\.[^/.]+$/, '');
+          state.pendingCardAudioUrl = url;
+          state.pendingCardAudioName = cleanName;
+          state.pendingClipStart = 0;
+
+          if (memAudioLabel) memAudioLabel.textContent = file.name;
+          if (memSongInput && !memSongInput.value.trim()) {
+            memSongInput.value = cleanName;
+          }
+
+          const tempAudio = new Audio();
+          tempAudio.preload = 'metadata';
+          tempAudio.src = url;
+          tempAudio.addEventListener('loadedmetadata', () => {
+            const total = Math.max(1, Math.floor(tempAudio.duration || 180));
+            state.pendingCardAudioDuration = total;
+            state.pendingClipDuration = Math.min(30, total);
+            if (trimSlider) {
+              trimSlider.max = String(Math.max(0, total - state.pendingClipDuration));
+              trimSlider.value = '0';
+            }
+            if (trimmerPanel) trimmerPanel.classList.remove('hidden');
+            updateTrimmerUI();
+          });
+        });
+      }
+
+      if (trimSlider) {
+        trimSlider.addEventListener('input', (e) => {
+          state.pendingClipStart = Number(e.target.value) || 0;
+          updateTrimmerUI();
+          if (isPreviewPlaying) {
+            previewAudio.currentTime = state.pendingClipStart;
+          }
+        });
+      }
+
+      if (trimPreviewBtn) {
+        trimPreviewBtn.addEventListener('click', () => {
+          if (!state.pendingCardAudioUrl) return;
+          if (isPreviewPlaying) {
+            stopPreviewAudio();
+            return;
+          }
+          // Pause main player and any card player
+          if (state.isPlaying) pausePlayback();
+          stopCardAudio();
+
+          previewAudio.src = state.pendingCardAudioUrl;
+          previewAudio.muted = state.isMuted;
+          previewAudio.currentTime = state.pendingClipStart;
+          isPreviewPlaying = true;
+
+          const prevLabel = document.getElementById('trim-preview-label');
+          const prevIcon = document.getElementById('trim-preview-icon');
+          if (prevLabel) prevLabel.textContent = 'Detener';
+          if (prevIcon) prevIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>';
+
+          previewAudio.play().catch(() => {
+            stopPreviewAudio();
+          });
+
+          const clipEnd = state.pendingClipStart + (state.pendingClipDuration || 30);
+          previewTimer = setInterval(() => {
+            if (previewAudio.currentTime >= clipEnd || previewAudio.ended) {
+              stopPreviewAudio();
+            }
+          }, 150);
+        });
+      }
+
+      const addMemoryForm = document.getElementById('add-memory-form');
+      if (addMemoryForm) {
+        addMemoryForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (!state.pendingPhotoData) {
+            showToast('Por favor selecciona una foto para tu Polaroid');
+            if (photoInput) photoInput.click();
+            return;
+          }
+
+          stopPreviewAudio();
+
+          const author = document.getElementById('memory-author-input').value.trim() || 'Amigo/a';
+          const date = document.getElementById('memory-date-input').value.trim() || '29 de Octubre';
+          const title = document.getElementById('memory-title-input').value.trim() || 'Recuerdo con Nita';
+          const category = document.getElementById('memory-category-select').value || 'rumba';
+          const story = document.getElementById('memory-story-input').value.trim();
+          const songTitle = (memSongInput && memSongInput.value.trim()) || state.pendingCardAudioName || 'Canción del recuerdo';
+
+          const rotations = ['rotate-[-1deg]', 'rotate-[1deg]', 'rotate-[-0.5deg]', 'rotate-[0.8deg]'];
+          const newMem = {
+            id: 'mem-' + Date.now(),
+            author: author,
+            date: date,
+            title: title,
+            category: category,
+            badge: categoryLabels[category] || 'Recuerdo',
+            story: story ? '“' + story.replace(/^["“]|["”]$/g, '') + '”' : '',
+            likes: 1,
+            liked: true,
+            rotation: rotations[state.memories.length % rotations.length],
+            imageData: state.pendingPhotoData,
+            clipAudioUrl: state.pendingCardAudioUrl || null,
+            songTitle: state.pendingCardAudioUrl ? songTitle : '',
+            clipStart: state.pendingClipStart || 0,
+            clipDuration: state.pendingClipDuration || 30
+          };
+
+          state.memories.unshift(newMem);
+          state.activeFilter = 'all';
+          state.pendingPhotoData = null;
+          state.pendingCardAudioUrl = null;
+          state.pendingCardAudioName = '';
+          state.pendingClipStart = 0;
+          state.pendingClipDuration = 30;
+
+          addMemoryForm.reset();
+          if (photoPreview) photoPreview.classList.add('hidden');
+          if (photoDropzoneText) photoDropzoneText.textContent = 'Seleccionar foto desde tu teléfono o PC';
+          if (memAudioLabel) memAudioLabel.textContent = 'Subir MP3 para esta foto';
+          if (trimmerPanel) trimmerPanel.classList.add('hidden');
+
+          // Reset filter pill styling to "Todas"
+          document.querySelectorAll('.gallery-filter-btn').forEach((b) => {
+            const active = b.getAttribute('data-filter') === 'all';
+            b.className = active
+              ? 'gallery-filter-btn px-3.5 py-1.5 rounded-full bg-champagne-400 text-midnight font-semibold whitespace-nowrap transition'
+              : 'gallery-filter-btn px-3.5 py-1.5 rounded-full btn-secondary whitespace-nowrap transition';
+          });
+
+          saveState();
+          renderGallery();
+          createBurst(window.innerWidth / 2, window.innerHeight / 2);
+          showToast('Foto Polaroid publicada en la galería');
+
+          const galEl = document.getElementById('galeria');
+          if (galEl) galEl.scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+
+      // Form 2: Add New Wish to Wall
+      const addWishForm = document.getElementById('add-wish-form');
+      if (addWishForm) {
+        addWishForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = document.getElementById('wish-name-input').value.trim();
+          const role = document.getElementById('wish-role-input').value.trim() || 'Amigo/a del grupo';
+          const msg = document.getElementById('wish-message-input').value.trim();
+          if (!name || !msg) return;
+
+          const newWish = {
+            id: 'wish-' + Date.now(),
+            name: name,
+            role: role,
+            message: '“' + msg.replace(/^["“]|["”]$/g, '') + '”',
+            reactions: 1,
+            reacted: true
+          };
+
+          state.wishes.unshift(newWish);
+          addWishForm.reset();
+          saveState();
+          renderWishes();
+          createBurst(window.innerWidth / 2, window.innerHeight / 2);
+          showToast('Dedicatoria publicada en el muro');
+
+          const muroEl = document.getElementById('muro');
+          if (muroEl) muroEl.scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+
+      // Structure & Backup Modal
+      const structModal = document.getElementById('structure-modal');
+      const openStructBtn = document.getElementById('structure-modal-btn');
+      const closeStructBtn = document.getElementById('close-structure-modal-btn');
+
+      if (openStructBtn && structModal) {
+        openStructBtn.addEventListener('click', () => {
+          structModal.classList.remove('hidden');
+          structModal.classList.add('flex');
+        });
+      }
+      if (closeStructBtn && structModal) {
+        closeStructBtn.addEventListener('click', () => {
+          structModal.classList.add('hidden');
+          structModal.classList.remove('flex');
+        });
+      }
+
+      const exportJsonBtn = document.getElementById('export-json-btn');
+      if (exportJsonBtn) {
+        exportJsonBtn.addEventListener('click', () => {
+          const dataStr = JSON.stringify(
+            { memories: state.memories, wishes: state.wishes },
+            null,
+            2
+          );
+          const blob = new Blob([dataStr], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'respaldo_celebracion_nita.json';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showToast('Respaldo JSON descargado');
+        });
+      }
+
+      const importJsonBtn = document.getElementById('import-json-btn');
+      const importJsonInput = document.getElementById('import-json-input');
+      if (importJsonBtn && importJsonInput) {
+        importJsonBtn.addEventListener('click', () => importJsonInput.click());
+        importJsonInput.addEventListener('change', (e) => {
+          const file = (e.target.files || [])[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const parsed = JSON.parse(reader.result);
+              if (Array.isArray(parsed.memories)) state.memories = parsed.memories;
+              if (Array.isArray(parsed.wishes)) state.wishes = parsed.wishes;
+              saveState();
+              renderGallery();
+              renderWishes();
+              showToast('Respaldo cargado correctamente');
+            } catch (err) {
+              showToast('El archivo JSON no es válido');
+            }
+          };
+          reader.readAsText(file);
+        });
+      }
+
+      // Navigation active pill highlight
+      document.querySelectorAll('.nav-pill').forEach((pill) => {
+        pill.addEventListener('click', () => {
+          document.querySelectorAll('.nav-pill').forEach((p) => {
+            p.className = 'nav-pill px-3.5 py-1.5 rounded-full text-neutral-300 hover:text-white hover:bg-white/5 transition-all whitespace-nowrap';
+          });
+          pill.className = 'nav-pill px-3.5 py-1.5 rounded-full bg-champagne-400 text-midnight font-semibold transition-all whitespace-nowrap';
+        });
+      });
+
+      // Initialize
+      loadState();
+      initCountdown();
+      renderGallery();
+      renderWishes();
+      updatePlayerUI();
+    })();
+  </script>
+</body>
+</html>
