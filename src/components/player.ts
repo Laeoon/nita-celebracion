@@ -13,7 +13,6 @@ export class PlayerComponent {
     this.container = el;
 
     this.render();
-    this.bindEvents();
     this.iniciarAnimacionOndas();
 
     // Re-renderizar o actualizar ante cambios de estado
@@ -21,7 +20,7 @@ export class PlayerComponent {
     store.subscribe(() => this.actualizarUI());
   }
 
-  private render(): void {
+  public render(): void {
     const esAdmin = SessionService.esAdmin();
 
     this.container.innerHTML = `
@@ -119,6 +118,9 @@ export class PlayerComponent {
         </div>
       </div>
     `;
+
+    this.bindEvents();
+    this.actualizarUI();
   }
 
   private bindEvents(): void {

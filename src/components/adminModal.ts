@@ -36,32 +36,25 @@ export class AdminModalComponent {
 
   private renderLoginAdmin(): void {
     this.overlay.innerHTML = `
-      <div class="glass-panel-elevated rounded-3xl p-6 sm:p-7 max-w-sm w-full border border-champagne-400/30 space-y-5 shadow-2xl relative">
+      <div class="glass-panel-elevated rounded-3xl p-6 max-w-xs w-full border border-champagne-400/30 space-y-4 shadow-2xl relative">
         <button id="btn-cerrar-admin-modal" class="absolute top-4 right-4 text-neutral-400 hover:text-white text-sm">✕</button>
 
-        <div class="text-center space-y-1">
-          <span class="text-[10px] uppercase font-mono tracking-widest text-champagne-300">Modo Organizador</span>
-          <h3 class="text-lg font-serif font-bold text-white">Iniciar Sesión de Admin</h3>
-          <p class="text-xs text-neutral-400">Ingresa la contraseña maestra para gestionar la playlist y moderar fotos</p>
-        </div>
+        <h3 class="text-base font-serif font-bold text-white text-center">Sesión Admin</h3>
 
-        <form id="form-login-admin" class="space-y-3.5">
-          <div>
-            <label class="block text-xs font-medium text-neutral-300 mb-1">Contraseña Maestra</label>
-            <input 
-              type="password" 
-              id="admin-password-input" 
-              required 
-              placeholder="••••••••" 
-              class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-champagne-400"
-            />
-          </div>
+        <form id="form-login-admin" class="space-y-3">
+          <input 
+            type="password" 
+            id="admin-password-input" 
+            required 
+            placeholder="••••••••" 
+            class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-center text-sm font-mono tracking-widest text-champagne-300 placeholder-neutral-600 focus:outline-none focus:border-champagne-400"
+          />
 
           <button 
             type="submit" 
-            class="w-full py-3 rounded-xl btn-primary text-xs uppercase tracking-wider font-semibold shadow-subtle"
+            class="w-full py-2.5 rounded-xl btn-primary text-xs uppercase tracking-wider font-semibold shadow-subtle"
           >
-            Activar Administración
+            Entrar
           </button>
         </form>
       </div>

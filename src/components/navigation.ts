@@ -2,15 +2,12 @@ import { SessionService } from '../services/auth/session';
 
 export class NavigationComponent {
   private headerContainer: HTMLElement;
-  private navContainer: HTMLElement;
   private onAdminClick: () => void;
 
-  constructor(headerId: string, navId: string, onAdminClick: () => void) {
+  constructor(headerId: string, onAdminClick: () => void) {
     const h = document.getElementById(headerId);
-    const n = document.getElementById(navId);
-    if (!h || !n) throw new Error('Contenedores de navegación no encontrados');
+    if (!h) throw new Error(`No se encontró #${headerId}`);
     this.headerContainer = h;
-    this.navContainer = n;
     this.onAdminClick = onAdminClick;
 
     this.render();
@@ -22,55 +19,52 @@ export class NavigationComponent {
     const esAdmin = SessionService.esAdmin();
 
     this.headerContainer.innerHTML = `
-      <div class="max-w-xl mx-auto flex items-center justify-between gap-3">
-        <!-- Monograma y Nombre -->
-        <a href="#hero" class="flex items-center gap-3 group focus:outline-none">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-b from-champagne-400/25 to-champagne-400/5 border border-champagne-400/40 flex items-center justify-center text-base font-serif italic font-bold text-champagne-300 shadow-inner group-hover:border-champagne-300 transition">
-            N
-          </div>
-          <div class="flex flex-col">
-            <div class="flex items-baseline gap-2">
-              <h1 class="text-base sm:text-lg font-serif font-bold tracking-tight text-white leading-none">
-                Mariana <span class="italic font-normal text-champagne-300">“Nita”</span>
-              </h1>
-              <span class="px-1.5 py-0.5 rounded bg-champagne-400/10 border border-champagne-400/25 text-[9px] font-mono uppercase tracking-widest text-champagne-300">
-                29 Oct
-              </span>
+      <div class="max-w-xl mx-auto flex flex-col gap-3">
+        <!-- Fila superior: Marca, saludo y botón Administrar -->
+        <div class="flex items-center justify-between gap-3">
+          <a href="#hero" class="flex items-center gap-3 group focus:outline-none">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-b from-champagne-400/25 to-champagne-400/5 border border-champagne-400/40 flex items-center justify-center text-lg font-serif italic font-bold text-champagne-300 shadow-inner group-hover:border-champagne-300 transition">
+              N
             </div>
-            <p class="text-[10px] text-neutral-400 font-medium mt-0.5">
-              ${usuario ? `Hola, <span class="text-champagne-200 font-semibold">${usuario.nombre}</span>` : 'Celebración de Cumpleaños'}
-            </p>
-          </div>
-        </a>
+            <div class="flex flex-col">
+              <div class="flex items-baseline gap-2">
+                <h1 class="text-lg font-serif font-bold tracking-tight text-white leading-none">
+                  Mariana <span class="italic font-normal text-champagne-300">“Nita”</span>
+                </h1>
+                <span class="px-2 py-0.5 rounded-md bg-champagne-400/10 border border-champagne-400/25 text-[10px] font-mono uppercase tracking-widest text-champagne-300 font-semibold">
+                  29 Oct
+                </span>
+              </div>
+              <p class="text-[10px] uppercase tracking-[0.16em] text-neutral-400 font-medium mt-1">
+                ${usuario ? `Hola, <span class="text-champagne-200 font-semibold lowercase tracking-normal font-sans">${usuario.nombre}</span>` : 'Celebración de Cumpleaños'}
+              </p>
+            </div>
+          </a>
 
-        <!-- Botón Administrar -->
-        <button id="btn-header-admin" class="px-3 py-1.5 rounded-xl ${esAdmin ? 'bg-champagne-400 text-midnight font-semibold shadow-champagne-glow' : 'btn-secondary text-neutral-300'} text-xs font-medium flex items-center gap-1.5 transition">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-          </svg>
-          <span>${esAdmin ? 'Admin Activo' : 'Administrar'}</span>
-        </button>
-      </div>
-    `;
+          <!-- Botón Administrar -->
+          <button id="btn-header-admin" class="px-3.5 py-1.5 rounded-full ${esAdmin ? 'bg-champagne-400 text-midnight font-semibold shadow-champagne-glow' : 'btn-secondary text-neutral-300 hover:text-white'} text-xs font-medium flex items-center gap-1.5 transition">
+            <span>${esAdmin ? 'Admin Activo' : 'Administrar'}</span>
+          </button>
+        </div>
 
-    // Barra de navegación inferior
-    this.navContainer.innerHTML = `
-      <div class="max-w-md mx-auto glass-panel-elevated rounded-2xl px-2 py-1.5 flex items-center justify-around border border-white/10 shadow-2xl">
-        <a href="#hero" data-nav="hero" class="nav-item px-3 py-1.5 rounded-xl text-xs font-medium text-champagne-300 transition flex flex-col items-center gap-0.5">
-          <span>Inicio</span>
-        </a>
-        <a href="#musica" data-nav="musica" class="nav-item px-3 py-1.5 rounded-xl text-xs font-medium text-neutral-400 hover:text-white transition flex flex-col items-center gap-0.5">
-          <span>Música</span>
-        </a>
-        <a href="#recuerdos" data-nav="recuerdos" class="nav-item px-3 py-1.5 rounded-xl text-xs font-medium text-neutral-400 hover:text-white transition flex flex-col items-center gap-0.5">
-          <span>Recuerdos</span>
-        </a>
-        <a href="#dedicatorias" data-nav="dedicatorias" class="nav-item px-3 py-1.5 rounded-xl text-xs font-medium text-neutral-400 hover:text-white transition flex flex-col items-center gap-0.5">
-          <span>Muro</span>
-        </a>
-        <a href="#formulario-recuerdo" data-nav="publicar" class="nav-item px-3 py-1.5 rounded-xl text-xs font-medium bg-champagne-400 text-midnight font-semibold shadow hover:bg-champagne-300 transition flex flex-col items-center gap-0.5">
-          <span>Publicar</span>
-        </a>
+        <!-- Barra de navegación segmentada (Pills integradas) -->
+        <nav aria-label="Secciones" class="flex items-center justify-between p-1 bg-black/60 rounded-full border border-white/10 text-[11px] font-medium overflow-x-auto no-scrollbar">
+          <a class="nav-pill px-3.5 py-1.5 rounded-full bg-champagne-400 text-midnight font-semibold transition-all whitespace-nowrap" data-nav="hero" href="#hero">
+            Inicio
+          </a>
+          <a class="nav-pill px-3.5 py-1.5 rounded-full text-neutral-300 hover:text-white hover:bg-white/5 transition-all whitespace-nowrap" data-nav="musica" href="#musica">
+            Música
+          </a>
+          <a class="nav-pill px-3.5 py-1.5 rounded-full text-neutral-300 hover:text-white hover:bg-white/5 transition-all whitespace-nowrap" data-nav="recuerdos" href="#recuerdos">
+            Recuerdos
+          </a>
+          <a class="nav-pill px-3.5 py-1.5 rounded-full text-neutral-300 hover:text-white hover:bg-white/5 transition-all whitespace-nowrap" data-nav="dedicatorias" href="#dedicatorias">
+            Dedicatorias
+          </a>
+          <a class="nav-pill px-3.5 py-1.5 rounded-full text-neutral-300 hover:text-white hover:bg-white/5 transition-all whitespace-nowrap" data-nav="formulario-recuerdo" href="#formulario-recuerdo">
+            Publicar
+          </a>
+        </nav>
       </div>
     `;
 
@@ -82,7 +76,7 @@ export class NavigationComponent {
   private bindScrollSpy(): void {
     const sections = ['hero', 'musica', 'recuerdos', 'dedicatorias'];
     window.addEventListener('scroll', () => {
-      const scrollPos = window.scrollY + 200;
+      const scrollPos = window.scrollY + 180;
       for (const id of sections) {
         const el = document.getElementById(id);
         if (el) {
@@ -98,15 +92,13 @@ export class NavigationComponent {
   }
 
   private setActiveNav(id: string): void {
-    const links = this.navContainer.querySelectorAll('.nav-item');
-    links.forEach((l) => {
-      const navTarget = l.getAttribute('data-nav');
-      if (navTarget === id) {
-        l.classList.add('text-champagne-300');
-        l.classList.remove('text-neutral-400');
-      } else if (navTarget !== 'publicar') {
-        l.classList.remove('text-champagne-300');
-        l.classList.add('text-neutral-400');
+    const pills = this.headerContainer.querySelectorAll('.nav-pill');
+    pills.forEach((p) => {
+      const target = p.getAttribute('data-nav');
+      if (target === id) {
+        p.className = 'nav-pill px-3.5 py-1.5 rounded-full bg-champagne-400 text-midnight font-semibold transition-all whitespace-nowrap';
+      } else {
+        p.className = 'nav-pill px-3.5 py-1.5 rounded-full text-neutral-300 hover:text-white hover:bg-white/5 transition-all whitespace-nowrap';
       }
     });
   }

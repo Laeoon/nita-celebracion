@@ -12,12 +12,11 @@ export class DedicatoriasComponent {
     this.container = el;
 
     this.render();
-    this.bindEvents();
 
     store.subscribe(() => this.actualizarLista());
   }
 
-  private render(): void {
+  public render(): void {
     const usuario = SessionService.getUsuario();
 
     this.container.innerHTML = `
@@ -67,6 +66,8 @@ export class DedicatoriasComponent {
         </div>
       </section>
     `;
+
+    this.bindEvents();
   }
 
   private bindEvents(): void {

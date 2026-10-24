@@ -20,13 +20,13 @@ export class PolaroidsComponent {
     this.container = el;
 
     this.render();
-    this.bindEvents();
 
     store.subscribe(() => this.actualizarLista());
     audioPlayer.subscribe(() => this.actualizarMiniPlayers());
   }
 
-  private render(): void {
+  public render(): void {
+    this.detenerPreescucha();
     const usuario = SessionService.getUsuario();
 
     this.container.innerHTML = `
@@ -178,6 +178,8 @@ export class PolaroidsComponent {
         </div>
       </section>
     `;
+
+    this.bindEvents();
   }
 
   private bindEvents(): void {
