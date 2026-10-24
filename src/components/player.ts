@@ -24,7 +24,7 @@ export class PlayerComponent {
     const esAdmin = SessionService.esAdmin();
 
     this.container.innerHTML = `
-      <div class="space-y-3">
+      <section id="musica" class="scroll-mt-28 space-y-3">
         <div class="flex items-center justify-between">
           <div>
             <h3 class="text-lg font-serif font-bold text-white tracking-wide">Reproductor Musical</h3>
@@ -116,7 +116,7 @@ export class PlayerComponent {
             ` : ''}
           </div>
         </div>
-      </div>
+      </section>
     `;
 
     this.bindEvents();

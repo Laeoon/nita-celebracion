@@ -30,7 +30,7 @@ export class PolaroidsComponent {
     const usuario = SessionService.getUsuario();
 
     this.container.innerHTML = `
-      <section class="space-y-6" id="recuerdos">
+      <section class="space-y-6 scroll-mt-28" id="recuerdos">
         <!-- Encabezado de galería y filtros -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -43,12 +43,12 @@ export class PolaroidsComponent {
             <button data-cat="todas" class="px-3 py-1 rounded-full text-[11px] font-medium btn-primary">Todas</button>
             <button data-cat="rumba" class="px-3 py-1 rounded-full text-[11px] font-medium btn-secondary">La Rumba</button>
             <button data-cat="grupo" class="px-3 py-1 rounded-full text-[11px] font-medium btn-secondary">El Grupo</button>
-            <button data-cat="brindis" class="px-3 py-1 rounded-full text-[11px] font-medium btn-secondary">Brindis y Locuras</button>
+            <button data-cat="brindis" class="px-3 py-1 rounded-full text-[11px] font-medium btn-secondary">Tomaderas y Locuras</button>
           </div>
         </div>
 
         <!-- Formulario para subir nueva foto Polaroid -->
-        <div class="glass-panel rounded-3xl p-5 sm:p-6 shadow-glass border border-white/10" id="formulario-recuerdo">
+        <div class="glass-panel rounded-3xl p-5 sm:p-6 shadow-glass border border-white/10 scroll-mt-28" id="formulario-recuerdo">
           <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
             <h4 class="text-sm font-semibold text-champagne-300 flex items-center gap-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -102,7 +102,7 @@ export class PolaroidsComponent {
 
                 <div>
                   <label class="block text-[11px] text-neutral-300 mb-1">Título o Momento</label>
-                  <input id="input-polaroid-titulo" type="text" required placeholder="Ej. El tequila que no debió ser" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400" />
+                  <input id="input-polaroid-titulo" type="text" required placeholder="Ej. Cuando wilmer se perdio" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400" />
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
@@ -111,18 +111,18 @@ export class PolaroidsComponent {
                     <select id="select-polaroid-categoria" class="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400">
                       <option value="rumba">La Rumba</option>
                       <option value="grupo">El Grupo</option>
-                      <option value="brindis">Brindis y Locuras</option>
+                      <option value="brindis">Tomaderas y Locuras</option>
                     </select>
                   </div>
                   <div>
                     <label class="block text-[11px] text-neutral-300 mb-1">Fecha o Lugar</label>
-                    <input id="input-polaroid-lugar" type="text" placeholder="Ej. Playa El Yaque" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400" />
+                    <input id="input-polaroid-lugar" type="text" placeholder="Ej. Cata" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400" />
                   </div>
                 </div>
 
                 <div>
                   <label class="block text-[11px] text-neutral-300 mb-1">Anécdota / Historia corta</label>
-                  <textarea id="input-polaroid-historia" rows="2" placeholder="Cuenta el chisme o lo que pasó ese día..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400"></textarea>
+                  <textarea id="input-polaroid-historia" rows="2" placeholder="Wilmer se perdio en la playa... que mas voy a agregar" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400"></textarea>
                 </div>
               </div>
             </div>

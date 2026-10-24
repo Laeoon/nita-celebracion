@@ -12,7 +12,8 @@ export class CountdownComponent {
 
   private render(): void {
     this.container.innerHTML = `
-      <div class="glass-panel rounded-3xl p-6 sm:p-8 text-center shadow-glass relative overflow-hidden">
+      <section id="hero" class="scroll-mt-28">
+        <div class="glass-panel rounded-3xl p-6 sm:p-8 text-center shadow-glass relative overflow-hidden">
         <!-- Ambient subtle glow behind title -->
         <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-champagne-400/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -59,11 +60,12 @@ export class CountdownComponent {
 
         <!-- Acciones principales -->
         <div class="space-y-2.5">
-          <a href="#publicar" class="w-full py-3 px-6 rounded-xl btn-primary font-sans font-semibold text-xs uppercase tracking-wider shadow-subtle flex items-center justify-center gap-2">
+          <a href="#formulario-recuerdo" class="w-full py-3 px-6 rounded-xl btn-primary font-sans font-semibold text-xs uppercase tracking-wider shadow-subtle flex items-center justify-center gap-2">
             <span>Subir foto o dedicatoria</span>
           </a>
         </div>
       </div>
+    </section>
     `;
   }
 

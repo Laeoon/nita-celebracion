@@ -20,7 +20,7 @@ export class DedicatoriasComponent {
     const usuario = SessionService.getUsuario();
 
     this.container.innerHTML = `
-      <section class="space-y-6" id="dedicatorias">
+      <section class="space-y-6 scroll-mt-28" id="dedicatorias">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h3 class="text-xl font-serif font-bold text-white tracking-wide">Muro de Dedicatorias</h3>

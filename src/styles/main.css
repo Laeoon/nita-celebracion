@@ -25,6 +25,60 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.025'/%3E%3C/svg%3E");
 }
 
+/* Ambient animated luxury lights */
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  will-change: transform;
+  pointer-events: none;
+}
+
+.orb-1 {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(212, 168, 106, 0.16) 0%, rgba(212, 168, 106, 0.04) 65%, transparent 100%);
+  top: -8%;
+  left: 5%;
+  animation: floatOrb1 22s ease-in-out infinite alternate;
+}
+
+.orb-2 {
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(184, 137, 74, 0.14) 0%, rgba(184, 137, 74, 0.03) 65%, transparent 100%);
+  top: 55%;
+  right: -10%;
+  animation: floatOrb2 26s ease-in-out infinite alternate;
+}
+
+.orb-3 {
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(247, 81, 161, 0.08) 0%, rgba(247, 81, 161, 0.02) 65%, transparent 100%);
+  bottom: 5%;
+  left: 15%;
+  animation: floatOrb3 30s ease-in-out infinite alternate;
+}
+
+@keyframes floatOrb1 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(70px, 90px) scale(1.18); }
+  100% { transform: translate(-30px, 140px) scale(0.92); }
+}
+
+@keyframes floatOrb2 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-90px, -70px) scale(1.22); }
+  100% { transform: translate(50px, -110px) scale(0.88); }
+}
+
+@keyframes floatOrb3 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(80px, -60px) scale(1.12); }
+  100% { transform: translate(-60px, 70px) scale(1.02); }
+}
+
 /* Glass panels */
 .glass-panel {
   background: rgba(20, 18, 25, 0.85);
