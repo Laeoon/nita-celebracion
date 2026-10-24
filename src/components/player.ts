@@ -21,8 +21,6 @@ export class PlayerComponent {
   }
 
   public render(): void {
-    const esAdmin = SessionService.esAdmin();
-
     this.container.innerHTML = `
       <section id="musica" class="scroll-mt-28 space-y-3">
         <div class="flex items-center justify-between">
@@ -59,7 +57,7 @@ export class PlayerComponent {
                 Reproductor listo
               </h4>
               <p id="track-artist" class="text-[11px] text-neutral-400 truncate">
-                ${esAdmin ? 'Carga pistas MP3 para activar la lista oficial' : 'Esperando que comience la música'}
+                Toca "Agregar canción" para sumar música a la fiesta
               </p>
             </div>
 
@@ -104,16 +102,14 @@ export class PlayerComponent {
               </button>
             </div>
 
-            <!-- Botón para subir música (sólo Admin u organizador) -->
-            ${esAdmin ? `
-              <label class="cursor-pointer px-3 py-1.5 rounded-xl btn-secondary text-xs flex items-center gap-1.5 font-medium border-champagne-400/30 text-champagne-300 hover:border-champagne-300">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
-                </svg>
-                <span>Subir MP3</span>
-                <input id="input-subir-mp3" type="file" accept="audio/mp3,audio/mpeg,audio/*" multiple class="hidden" />
-              </label>
-            ` : ''}
+            <!-- Botón para subir música libre para todo el grupo -->
+            <label class="cursor-pointer px-3.5 py-1.5 rounded-xl btn-secondary text-xs flex items-center gap-1.5 font-medium border-champagne-400/30 text-champagne-300 hover:border-champagne-300 hover:bg-champagne-400/10 transition shadow-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+              <span>Agregar canción</span>
+              <input id="input-subir-mp3" type="file" accept="audio/mp3,audio/mpeg,audio/*" multiple class="hidden" />
+            </label>
           </div>
         </div>
       </section>
@@ -163,6 +159,9 @@ export class PlayerComponent {
       const files = (e.target as HTMLInputElement).files;
       if (!files || !files.length) return;
 
+      const usuario = SessionService.getUsuario();
+      const autorTexto = usuario ? `Sumada por ${usuario.nombre}` : 'Mariana “Nita” • Fiesta';
+
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const audioUrl = URL.createObjectURL(file);
@@ -171,12 +170,12 @@ export class PlayerComponent {
         store.agregarTrack({
           id: 'track-' + Date.now() + '-' + i,
           titulo: cleanName,
-          artista: 'Mariana “Nita” • Fiesta',
+          artista: autorTexto,
           audioUrl: audioUrl,
         });
       }
 
-      showToast(`Se agregaron ${files.length} pista(s) a la playlist`, 'exito');
+      showToast(`Se agregaron ${files.length} canción(es) a la playlist`, 'exito');
       this.actualizarUI();
     });
   }
