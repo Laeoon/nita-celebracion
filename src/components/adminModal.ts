@@ -109,6 +109,22 @@ export class AdminModalComponent {
           </div>
         </div>
 
+        <!-- Gestión de Playlist -->
+        <div class="bg-black/40 rounded-2xl p-4 border border-white/10 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-semibold text-champagne-300">Playlist del Reproductor</h4>
+            <span class="text-[10px] text-neutral-400 font-mono">${store.getTracks().length} canciones</span>
+          </div>
+          <p class="text-[11px] text-neutral-400">Puedes cargar archivos MP3 directamente desde este dispositivo para que suenen en la fiesta.</p>
+          <label class="cursor-pointer w-full py-2.5 px-3 rounded-xl btn-primary text-xs font-semibold flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <span>Seleccionar y Subir MP3s</span>
+            <input type="file" id="admin-mp3-upload" accept="audio/*" multiple class="hidden" />
+          </label>
+        </div>
+
         <!-- Acciones de administración -->
         <div class="space-y-2 pt-2 border-t border-white/10">
           <button id="btn-vaciar-todo" class="w-full py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-medium transition">
@@ -139,6 +155,28 @@ export class AdminModalComponent {
     document.getElementById('btn-copiar-link')?.addEventListener('click', () => {
       navigator.clipboard.writeText(inviteUrl);
       showToast('Enlace de invitación copiado al portapapeles', 'exito');
+    });
+
+    const mp3Input = document.getElementById('admin-mp3-upload') as HTMLInputElement | null;
+    mp3Input?.addEventListener('change', () => {
+      const files = mp3Input.files;
+      if (!files || !files.length) return;
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const audioUrl = URL.createObjectURL(file);
+        const cleanName = file.name.replace(/\.[^/.]+$/, '');
+        store.agregarTrack({
+          id: 'track-' + Date.now() + '-' + i,
+          titulo: cleanName,
+          artista: 'Mariana “Nita” • Fiesta',
+          audioUrl: audioUrl,
+        });
+      }
+
+      showToast(`Se agregaron ${files.length} canciones al reproductor`, 'exito');
+      this.renderPanelAdmin();
+      this.onAdminChange();
     });
 
     document.getElementById('btn-descargar-qr')?.addEventListener('click', () => {

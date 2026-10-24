@@ -1,4 +1,5 @@
 import type { Recuerdo, Dedicatoria, Comentario, TrackMusical } from '../../types';
+import { PLAYLIST_OFICIAL } from '../../constants/playlist';
 
 interface AppState {
   recuerdos: Recuerdo[];
@@ -34,6 +35,10 @@ class AppStore {
       } catch {
         console.error('Error parseando datos de localStorage');
       }
+    }
+    // Si la lista de tracks está vacía, cargar de fábrica si hay pistas oficiales
+    if (!this.state.tracks.length && PLAYLIST_OFICIAL.length) {
+      this.state.tracks = [...PLAYLIST_OFICIAL];
     }
   }
 
