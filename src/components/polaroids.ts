@@ -3,6 +3,7 @@ import { audioPlayer } from '../services/audio/player';
 import { SessionService } from '../services/auth/session';
 import { comprimirImagenEnCliente } from '../services/image/compressor';
 import { recortarAudioEnCliente } from '../services/audio/cutter';
+import { SupabaseService } from '../services/supabase/client';
 import { showToast } from './toast';
 import type { Recuerdo, CategoriaRecuerdo } from '../types';
 
@@ -383,19 +384,28 @@ export class PolaroidsComponent {
         const fechaLugar = (document.getElementById('input-polaroid-lugar') as HTMLInputElement).value || '29 de Octubre';
         const historia = (document.getElementById('input-polaroid-historia') as HTMLTextAreaElement).value;
 
-        // Foto URL local o blob
-        const fotoUrl = URL.createObjectURL(this.selectedPhotoBlob);
+        // Subir foto a Supabase o generar URL local
+        showToast('Subiendo y optimizando foto...', 'info');
+        let fotoUrl = URL.createObjectURL(this.selectedPhotoBlob);
+        const cloudFoto = await SupabaseService.subirFoto(this.selectedPhotoBlob, titulo);
+        if (cloudFoto) {
+          fotoUrl = cloudFoto;
+        }
 
-        // Recorte físico de audio si seleccionó canción
+        // Recorte físico de audio y subida
         let audioClipUrl: string | undefined = undefined;
         let cancionTitulo: string | undefined = undefined;
 
         if (this.selectedAudioFile) {
-          showToast('Recortando físicamente 30s de audio...', 'info');
+          showToast('Recortando y subiendo clip de audio de 30s...', 'info');
           const startSec = Number(trimmerSlider.value) || 0;
           const wavBlob = await recortarAudioEnCliente(this.selectedAudioFile, startSec, 30);
           audioClipUrl = URL.createObjectURL(wavBlob);
           cancionTitulo = this.selectedAudioFile.name.replace(/\.[^/.]+$/, '');
+          const cloudAudio = await SupabaseService.subirAudioClip(wavBlob, cancionTitulo);
+          if (cloudAudio) {
+            audioClipUrl = cloudAudio;
+          }
         }
 
         const nuevoRecuerdo: Recuerdo = {

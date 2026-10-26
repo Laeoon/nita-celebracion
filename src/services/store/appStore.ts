@@ -1,6 +1,7 @@
 import type { Recuerdo, Dedicatoria, Comentario, TrackMusical, CategoriaRecuerdo } from '../../types';
 import { PLAYLIST_OFICIAL } from '../../constants/playlist';
 import { obtenerAudioDeIndexedDB, eliminarAudioDeIndexedDB } from '../storage/audioStorage';
+import { SupabaseService, supabase } from '../supabase/client';
 
 interface AppState {
   recuerdos: Recuerdo[];
@@ -26,6 +27,45 @@ class AppStore {
   constructor() {
     this.cargarDeStorage();
     this.restaurarAudiosPersistentes();
+    this.sincronizarConSupabase();
+  }
+
+  private async sincronizarConSupabase(): Promise<void> {
+    try {
+      const cloudRecuerdos = await SupabaseService.fetchRecuerdos();
+      if (cloudRecuerdos && cloudRecuerdos.length) {
+        this.state.recuerdos = cloudRecuerdos;
+      }
+      const cloudDedicatorias = await SupabaseService.fetchDedicatorias();
+      if (cloudDedicatorias && cloudDedicatorias.length) {
+        this.state.dedicatorias = cloudDedicatorias;
+      }
+      this.guardarEnStorage();
+      this.notificar();
+
+      // Sincronización en tiempo real
+      supabase
+        .channel('public_celebration_sync')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'recuerdos' }, async () => {
+          const recs = await SupabaseService.fetchRecuerdos();
+          if (recs) {
+            this.state.recuerdos = recs;
+            this.guardarEnStorage();
+            this.notificar();
+          }
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'dedicatorias' }, async () => {
+          const deds = await SupabaseService.fetchDedicatorias();
+          if (deds) {
+            this.state.dedicatorias = deds;
+            this.guardarEnStorage();
+            this.notificar();
+          }
+        })
+        .subscribe();
+    } catch (err) {
+      console.warn('Error en sincronización inicial con Supabase:', err);
+    }
   }
 
   private async restaurarAudiosPersistentes(): Promise<void> {
@@ -116,6 +156,7 @@ class AppStore {
   agregarRecuerdo(recuerdo: Recuerdo): void {
     this.state.recuerdos.unshift(recuerdo);
     this.guardarEnStorage();
+    SupabaseService.guardarRecuerdo(recuerdo);
   }
 
   eliminarRecuerdo(id: string): void {
@@ -124,11 +165,13 @@ class AppStore {
       (c) => !(c.tipoObjetivo === 'recuerdo' && c.objetivoId === id)
     );
     this.guardarEnStorage();
+    SupabaseService.eliminarRecuerdo(id);
   }
 
   agregarDedicatoria(dedicatoria: Dedicatoria): void {
     this.state.dedicatorias.unshift(dedicatoria);
     this.guardarEnStorage();
+    SupabaseService.guardarDedicatoria(dedicatoria);
   }
 
   eliminarDedicatoria(id: string): void {
@@ -137,6 +180,7 @@ class AppStore {
       (c) => !(c.tipoObjetivo === 'dedicatoria' && c.objetivoId === id)
     );
     this.guardarEnStorage();
+    SupabaseService.eliminarDedicatoria(id);
   }
 
   agregarComentario(comentario: Comentario): void {
