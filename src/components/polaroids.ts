@@ -18,6 +18,13 @@ export class PolaroidsComponent {
     if (!el) throw new Error(`No se encontró #${containerId}`);
     this.container = el;
 
+    this.previewAudio.onpause = () => {
+      const btnText = document.getElementById('trimmer-btn-text');
+      if (btnText) btnText.textContent = 'Escuchar 30s';
+    };
+
+    audioPlayer.registrarPreviewAudio(this.previewAudio);
+
     this.render();
 
     store.subscribe(() => this.actualizarLista());
@@ -548,6 +555,9 @@ export class PolaroidsComponent {
         e.stopPropagation();
         const id = btn.getAttribute('data-delete-id');
         if (id && confirm('¿Deseas eliminar esta Polaroid?')) {
+          if (audioPlayer.getEstado().activePolaroidId === id) {
+            audioPlayer.detenerPolaroidAudio();
+          }
           store.eliminarRecuerdo(id);
           showToast('Polaroid eliminada', 'info');
         }

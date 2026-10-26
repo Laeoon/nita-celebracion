@@ -17,7 +17,7 @@ class AudioPlayerService {
   // Mini reproductor de polaroid activo (para evitar solapamientos)
   private polaroidAudio: HTMLAudioElement = new Audio();
   private activePolaroidId: string | null = null;
-  private polaroidTimer: number | null = null;
+  private previewAudioRef: HTMLAudioElement | null = null;
 
   private listeners: Array<() => void> = [];
 
@@ -71,6 +71,19 @@ class AudioPlayerService {
     this.listeners.forEach((l) => l());
   }
 
+  registrarPreviewAudio(audioEl: HTMLAudioElement): void {
+    this.previewAudioRef = audioEl;
+  }
+
+  detenerTodo(): void {
+    this.pause();
+    this.detenerPolaroidAudio();
+    if (this.previewAudioRef) {
+      this.previewAudioRef.pause();
+      this.previewAudioRef.currentTime = 0;
+    }
+  }
+
   // --- CONTROLES PRINCIPALES ---
   play(index?: number): void {
     const tracks = store.getTracks();
@@ -80,7 +93,11 @@ class AudioPlayerService {
       this.currentIndex = index;
     }
 
+    // Frenar absolutamente cualquier otro audio en curso
     this.detenerPolaroidAudio();
+    if (this.previewAudioRef) {
+      this.previewAudioRef.pause();
+    }
 
     const track = tracks[this.currentIndex];
     if (!track || !track.audioUrl) return;
@@ -173,11 +190,13 @@ class AudioPlayerService {
 
   // --- REPRODUCCIÓN MINI POLAROID (30s) ---
   playPolaroid(id: string, audioUrl: string, inicioSegundos: number = 0, duracionSegundos: number = 30): void {
-    // Pausar el reproductor principal
-    if (this.isPlaying) {
-      this.pause();
+    // Pausar el reproductor principal y el preview del recortador
+    this.pause();
+    if (this.previewAudioRef) {
+      this.previewAudioRef.pause();
     }
 
+    // Si pulsó la misma tarjeta que está sonando, pausar y salir
     if (this.activePolaroidId === id && !this.polaroidAudio.paused) {
       this.detenerPolaroidAudio();
       return;
@@ -190,17 +209,19 @@ class AudioPlayerService {
     this.polaroidAudio.currentTime = inicioSegundos;
     this.polaroidAudio.muted = this.isMuted;
 
+    const limite = inicioSegundos + duracionSegundos;
+
+    // Control estricto con ontimeupdate (cero desfase o solapamiento)
+    this.polaroidAudio.ontimeupdate = () => {
+      if (this.polaroidAudio.currentTime >= limite || this.polaroidAudio.ended) {
+        this.detenerPolaroidAudio();
+      } else {
+        this.notificar();
+      }
+    };
+
     this.polaroidAudio.play().then(() => {
       this.notificar();
-      const limite = inicioSegundos + duracionSegundos;
-
-      this.polaroidTimer = window.setInterval(() => {
-        if (this.polaroidAudio.currentTime >= limite || this.polaroidAudio.ended) {
-          this.detenerPolaroidAudio();
-        } else {
-          this.notificar();
-        }
-      }, 100);
     }).catch((e) => {
       console.warn('Error al reproducir clip polaroid:', e);
       this.detenerPolaroidAudio();
@@ -208,11 +229,9 @@ class AudioPlayerService {
   }
 
   detenerPolaroidAudio(): void {
-    if (this.polaroidTimer) {
-      clearInterval(this.polaroidTimer);
-      this.polaroidTimer = null;
-    }
+    this.polaroidAudio.ontimeupdate = null;
     this.polaroidAudio.pause();
+    this.polaroidAudio.currentTime = 0;
     this.activePolaroidId = null;
     this.notificar();
   }
