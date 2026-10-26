@@ -44,12 +44,15 @@ export class PolaroidsComponent {
             <p class="text-xs text-neutral-400">Momentos espontáneos con audio exclusivo de 30 segundos</p>
           </div>
 
-          <!-- Filtros de categoría -->
-          <div class="flex flex-wrap gap-1.5" id="polaroid-filters">
-            <button data-cat="todas" class="px-3 py-1 rounded-full text-[11px] font-medium btn-primary">Todas</button>
-            <button data-cat="rumba" class="px-3 py-1 rounded-full text-[11px] font-medium btn-secondary">La Rumba</button>
-            <button data-cat="grupo" class="px-3 py-1 rounded-full text-[11px] font-medium btn-secondary">El Grupo</button>
-            <button data-cat="brindis" class="px-3 py-1 rounded-full text-[11px] font-medium btn-secondary">Tomaderas y Locuras</button>
+          <!-- Filtros de categoría horizontales -->
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 max-w-full" id="polaroid-filters">
+            <button data-cat="todas" class="px-3 py-1 rounded-full text-[11px] font-medium btn-primary whitespace-nowrap">Todas</button>
+            <button data-cat="rumba" class="px-3 py-1 rounded-full text-[11px] font-medium btn-secondary whitespace-nowrap">La Rumba</button>
+            <button data-cat="grupo" class="px-3 py-1 rounded-full text-[11px] font-medium btn-secondary whitespace-nowrap">El Grupo</button>
+            <button data-cat="tomaderas" class="px-3 py-1 rounded-full text-[11px] font-medium btn-secondary whitespace-nowrap">Tomaderas y Locuras</button>
+            <button data-cat="viajes" class="px-3 py-1 rounded-full text-[11px] font-medium btn-secondary whitespace-nowrap">Viajes y Playa</button>
+            <button data-cat="infraganti" class="px-3 py-1 rounded-full text-[11px] font-medium btn-secondary whitespace-nowrap">Infraganti y Fails</button>
+            <button data-cat="nita" class="px-3 py-1 rounded-full text-[11px] font-medium btn-secondary whitespace-nowrap">Con Nita</button>
           </div>
         </div>
 
@@ -113,11 +116,15 @@ export class PolaroidsComponent {
 
                 <div class="grid grid-cols-2 gap-2">
                   <div>
-                    <label class="block text-[11px] text-neutral-300 mb-1">Categoría</label>
-                    <select id="select-polaroid-categoria" class="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400">
+                    <label class="block text-[11px] text-neutral-300 mb-1">Categoría <span class="text-champagne-400 font-bold">*</span></label>
+                    <select id="select-polaroid-categoria" required class="w-full bg-neutral-900 border border-champagne-400/30 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400 cursor-pointer">
+                      <option value="" disabled selected>-- Elige una categoría --</option>
                       <option value="rumba">La Rumba</option>
                       <option value="grupo">El Grupo</option>
-                      <option value="brindis">Tomaderas y Locuras</option>
+                      <option value="tomaderas">Tomaderas y Locuras</option>
+                      <option value="viajes">Viajes y Playa</option>
+                      <option value="infraganti">Momentos Infraganti y Fails</option>
+                      <option value="nita">Con la Cumpleañera</option>
                     </select>
                   </div>
                   <div>
@@ -356,6 +363,15 @@ export class PolaroidsComponent {
       }
 
       const submitBtn = document.getElementById('btn-submit-polaroid') as HTMLButtonElement;
+      const selectCategoria = document.getElementById('select-polaroid-categoria') as HTMLSelectElement;
+      const categoria = selectCategoria.value;
+
+      if (!categoria) {
+        showToast('Debes elegir una categoría obligatoria para la foto', 'alerta');
+        selectCategoria.focus();
+        return;
+      }
+
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span>Procesando y optimizando...</span>';
 
@@ -364,7 +380,6 @@ export class PolaroidsComponent {
         const autorNombre = usuarioSesion ? usuarioSesion.nombre : (document.getElementById('input-polaroid-autor') as HTMLInputElement).value;
         const autorApodo = usuarioSesion ? usuarioSesion.apodo : (document.getElementById('input-polaroid-apodo') as HTMLInputElement)?.value;
         const titulo = (document.getElementById('input-polaroid-titulo') as HTMLInputElement).value;
-        const categoria = (document.getElementById('select-polaroid-categoria') as HTMLSelectElement).value as 'rumba' | 'grupo' | 'brindis';
         const fechaLugar = (document.getElementById('input-polaroid-lugar') as HTMLInputElement).value || '29 de Octubre';
         const historia = (document.getElementById('input-polaroid-historia') as HTMLTextAreaElement).value;
 
@@ -475,10 +490,20 @@ export class PolaroidsComponent {
 
     // Ángulos sutiles para dar sensación física realista de Polaroid sobre mesa
     const tilts = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2', 'rotate-0'];
+    const catLabels: Record<string, string> = {
+      rumba: 'La Rumba',
+      grupo: 'El Grupo',
+      tomaderas: 'Tomaderas y Locuras',
+      brindis: 'Tomaderas y Locuras',
+      viajes: 'Viajes y Playa',
+      infraganti: 'Infraganti',
+      nita: 'Con Nita',
+    };
 
     grid.innerHTML = recuerdos.map((r, i) => {
       const tilt = tilts[i % tilts.length];
       const puedeBorrar = esAdmin || (usuario && usuario.id === r.usuarioId);
+      const labelCategoria = catLabels[r.categoria] || r.categoria;
 
       return `
         <div class="polaroid-card rounded-2xl p-4 sm:p-5 text-neutral-900 ${tilt} transform transition-all duration-300 relative group" id="card-${r.id}">
@@ -487,7 +512,7 @@ export class PolaroidsComponent {
             <img src="${r.fotoUrl}" alt="${r.titulo}" class="w-full h-full object-cover" loading="lazy" />
 
             <span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-[9px] font-mono uppercase tracking-wider text-champagne-300 border border-white/10">
-              ${r.categoria}
+              ${labelCategoria}
             </span>
 
             ${puedeBorrar ? `

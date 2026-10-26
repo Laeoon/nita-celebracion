@@ -1,4 +1,4 @@
-import type { Recuerdo, Dedicatoria, Comentario, TrackMusical } from '../../types';
+import type { Recuerdo, Dedicatoria, Comentario, TrackMusical, CategoriaRecuerdo } from '../../types';
 import { PLAYLIST_OFICIAL } from '../../constants/playlist';
 import { obtenerAudioDeIndexedDB, eliminarAudioDeIndexedDB } from '../storage/audioStorage';
 
@@ -7,7 +7,7 @@ interface AppState {
   dedicatorias: Dedicatoria[];
   comentarios: Comentario[];
   tracks: TrackMusical[];
-  filtroCategoria: 'todas' | 'rumba' | 'grupo' | 'brindis';
+  filtroCategoria: CategoriaRecuerdo;
 }
 
 const STORAGE_KEY_DATA = 'nita_app_data_v1';
@@ -85,7 +85,12 @@ class AppStore {
     if (this.state.filtroCategoria === 'todas') {
       return this.state.recuerdos;
     }
-    return this.state.recuerdos.filter((r) => r.categoria === this.state.filtroCategoria);
+    return this.state.recuerdos.filter((r) => {
+      if (this.state.filtroCategoria === 'tomaderas') {
+        return r.categoria === 'tomaderas' || r.categoria === 'brindis';
+      }
+      return r.categoria === this.state.filtroCategoria;
+    });
   }
 
   getDedicatorias(): Dedicatoria[] {
@@ -103,7 +108,7 @@ class AppStore {
   }
 
   // --- ACTIONS ---
-  setFiltro(categoria: 'todas' | 'rumba' | 'grupo' | 'brindis'): void {
+  setFiltro(categoria: CategoriaRecuerdo): void {
     this.state.filtroCategoria = categoria;
     this.notificar();
   }

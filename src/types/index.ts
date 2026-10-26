@@ -1,4 +1,12 @@
-export type CategoriaRecuerdo = 'todas' | 'rumba' | 'grupo' | 'brindis';
+export type CategoriaRecuerdo = 
+  | 'todas' 
+  | 'rumba' 
+  | 'grupo' 
+  | 'tomaderas' 
+  | 'brindis'
+  | 'viajes' 
+  | 'infraganti' 
+  | 'nita';
 
 export interface Usuario {
   id: string;
@@ -16,7 +24,7 @@ export interface Recuerdo {
   autorApodo?: string;
   titulo: string;
   fechaLugar?: string;
-  categoria: 'rumba' | 'grupo' | 'brindis';
+  categoria: string;
   historia?: string;
   fotoUrl: string;
   audioClipUrl?: string;
