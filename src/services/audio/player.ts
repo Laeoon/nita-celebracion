@@ -72,31 +72,40 @@ class AudioPlayerService {
   }
 
   // --- CONTROLES PRINCIPALES ---
-  play(): void {
+  play(index?: number): void {
     const tracks = store.getTracks();
     if (!tracks.length) return;
+
+    if (index !== undefined && index >= 0 && index < tracks.length) {
+      this.currentIndex = index;
+    }
 
     this.detenerPolaroidAudio();
 
     const track = tracks[this.currentIndex];
-    if (!track) return;
+    if (!track || !track.audioUrl) return;
 
     if (this.audio.src !== track.audioUrl) {
       this.audio.src = track.audioUrl;
     }
 
-    this.initWebAudio();
-    if (this.audioCtx && this.audioCtx.state === 'suspended') {
-      this.audioCtx.resume();
-    }
-
     this.audio.muted = this.isMuted;
+
     this.audio.play().then(() => {
       this.isPlaying = true;
       this.iniciarProgreso();
       this.notificar();
+
+      try {
+        this.initWebAudio();
+        if (this.audioCtx && this.audioCtx.state === 'suspended') {
+          this.audioCtx.resume();
+        }
+      } catch (e) {
+        console.warn('Web Audio visualizer no crítico:', e);
+      }
     }).catch((err) => {
-      console.warn('Play rechazado por política de autoplay del navegador:', err);
+      console.warn('Play rechazado o archivo no accesible:', err);
       this.isPlaying = false;
       this.notificar();
     });

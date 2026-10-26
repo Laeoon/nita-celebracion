@@ -1,5 +1,6 @@
 import type { Recuerdo, Dedicatoria, Comentario, TrackMusical } from '../../types';
 import { PLAYLIST_OFICIAL } from '../../constants/playlist';
+import { obtenerAudioDeIndexedDB, eliminarAudioDeIndexedDB } from '../storage/audioStorage';
 
 interface AppState {
   recuerdos: Recuerdo[];
@@ -24,6 +25,23 @@ class AppStore {
 
   constructor() {
     this.cargarDeStorage();
+    this.restaurarAudiosPersistentes();
+  }
+
+  private async restaurarAudiosPersistentes(): Promise<void> {
+    let huboCambios = false;
+    for (const track of this.state.tracks) {
+      if (track.audioUrl.startsWith('blob:') || !track.audioUrl) {
+        const blob = await obtenerAudioDeIndexedDB(track.id);
+        if (blob) {
+          track.audioUrl = URL.createObjectURL(blob);
+          huboCambios = true;
+        }
+      }
+    }
+    if (huboCambios) {
+      this.notificar();
+    }
   }
 
   private cargarDeStorage(): void {
@@ -145,13 +163,21 @@ class AppStore {
   }
 
   // --- TRACKS ---
-  agregarTrack(track: TrackMusical): void {
+  agregarTrack(track: TrackMusical): boolean {
+    const yaExiste = this.state.tracks.some(
+      (t) => t.titulo.trim().toLowerCase() === track.titulo.trim().toLowerCase()
+    );
+    if (yaExiste) {
+      return false;
+    }
     this.state.tracks.push(track);
     this.guardarEnStorage();
+    return true;
   }
 
   eliminarTrack(id: string): void {
     this.state.tracks = this.state.tracks.filter((t) => t.id !== id);
+    eliminarAudioDeIndexedDB(id);
     this.guardarEnStorage();
   }
 
