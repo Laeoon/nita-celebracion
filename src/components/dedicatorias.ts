@@ -35,11 +35,11 @@ export class DedicatoriasComponent {
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label class="block text-[11px] text-neutral-300 mb-1">Tu Nombre</label>
-                  <input id="input-dedicatoria-autor" type="text" required placeholder="Ej. Carlos" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400" />
+                  <input id="input-dedicatoria-autor" type="text" required placeholder="Ej. Wilmer" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400" />
                 </div>
                 <div>
                   <label class="block text-[11px] text-neutral-300 mb-1">Apodo (Opcional)</label>
-                  <input id="input-dedicatoria-apodo" type="text" placeholder="Ej. El Primo" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400" />
+                  <input id="input-dedicatoria-apodo" type="text" placeholder="Ej. Lawi" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400" />
                 </div>
               </div>
             ` : `
