@@ -550,7 +550,14 @@ export class PolaroidsComponent {
             </div>
 
             ${r.historia ? `
-              <p class="text-xs text-neutral-700 italic font-serif leading-relaxed line-clamp-3">“${r.historia}”</p>
+              <div class="text-xs text-neutral-700 italic font-serif leading-relaxed">
+                <p class="${r.historia.length > 100 ? 'line-clamp-3' : ''} transition-all" data-story-text="${r.id}">“${r.historia}”</p>
+                ${r.historia.length > 100 ? `
+                  <button type="button" data-toggle-story="${r.id}" class="text-[10px] font-sans font-semibold text-champagne-600 hover:text-champagne-700 not-italic mt-0.5 underline">
+                    ver más...
+                  </button>
+                ` : ''}
+              </div>
             ` : ''}
 
             <!-- Mini reproductor de 30 segundos -->
@@ -627,6 +634,24 @@ export class PolaroidsComponent {
         const id = btn.getAttribute('data-reaccionar-id');
         if (id) {
           store.toggleReaccion('recuerdo', id);
+        }
+      });
+    });
+
+    grid.querySelectorAll('[data-toggle-story]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-toggle-story');
+        const p = grid.querySelector(`[data-story-text="${id}"]`);
+        if (p) {
+          const isClamped = p.classList.contains('line-clamp-3');
+          if (isClamped) {
+            p.classList.remove('line-clamp-3');
+            btn.textContent = 'ver menos';
+          } else {
+            p.classList.add('line-clamp-3');
+            btn.textContent = 'ver más...';
+          }
         }
       });
     });
