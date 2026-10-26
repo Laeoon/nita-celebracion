@@ -15,10 +15,11 @@ export class SupabaseService {
   /**
    * Sube una foto comprimida al bucket 'fotos-polaroid'
    */
-  static async subirFoto(blob: Blob, nombreArchivo: string): Promise<string | null> {
+  static async subirFoto(blob: Blob, _nombreArchivo?: string): Promise<string | null> {
     try {
       const ext = blob.type.includes('png') ? 'png' : 'webp';
-      const path = `polaroids/${Date.now()}_${nombreArchivo.replace(/\s+/g, '_')}.${ext}`;
+      const safeId = 'p_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+      const path = `polaroids/${safeId}.${ext}`;
       const { data, error } = await supabase.storage.from('fotos-polaroid').upload(path, blob, {
         contentType: blob.type || 'image/webp',
         upsert: true,
@@ -38,9 +39,10 @@ export class SupabaseService {
   /**
    * Sube un fragmento de audio de 30s al bucket 'clips-30s'
    */
-  static async subirAudioClip(blob: Blob, nombreArchivo: string): Promise<string | null> {
+  static async subirAudioClip(blob: Blob, _nombreArchivo?: string): Promise<string | null> {
     try {
-      const path = `clips/${Date.now()}_${nombreArchivo.replace(/\s+/g, '_')}.wav`;
+      const safeId = 'clip_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+      const path = `clips/${safeId}.wav`;
       const { data, error } = await supabase.storage.from('clips-30s').upload(path, blob, {
         contentType: 'audio/wav',
         upsert: true,

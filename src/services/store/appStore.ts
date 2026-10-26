@@ -33,11 +33,11 @@ class AppStore {
   private async sincronizarConSupabase(): Promise<void> {
     try {
       const cloudRecuerdos = await SupabaseService.fetchRecuerdos();
-      if (cloudRecuerdos && cloudRecuerdos.length) {
+      if (cloudRecuerdos !== null) {
         this.state.recuerdos = cloudRecuerdos;
       }
       const cloudDedicatorias = await SupabaseService.fetchDedicatorias();
-      if (cloudDedicatorias && cloudDedicatorias.length) {
+      if (cloudDedicatorias !== null) {
         this.state.dedicatorias = cloudDedicatorias;
       }
       this.guardarEnStorage();

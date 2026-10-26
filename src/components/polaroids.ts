@@ -384,23 +384,25 @@ export class PolaroidsComponent {
         const fechaLugar = (document.getElementById('input-polaroid-lugar') as HTMLInputElement).value || '29 de Octubre';
         const historia = (document.getElementById('input-polaroid-historia') as HTMLTextAreaElement).value;
 
-        // Subir foto a Supabase o generar URL local
-        showToast('Subiendo y optimizando foto...', 'info');
-        let fotoUrl = URL.createObjectURL(this.selectedPhotoBlob);
+        // Subir foto a Supabase Storage con ruta segura
+        showToast('Subiendo foto a la nube...', 'info');
         const cloudFoto = await SupabaseService.subirFoto(this.selectedPhotoBlob, titulo);
-        if (cloudFoto) {
-          fotoUrl = cloudFoto;
+        if (!cloudFoto) {
+          showToast('No se pudo subir la foto a la nube. Revisa tu conexión.', 'alerta');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>Publicar Polaroid</span>';
+          return;
         }
+        const fotoUrl = cloudFoto;
 
-        // Recorte físico de audio y subida
+        // Recorte físico de audio y subida a Supabase
         let audioClipUrl: string | undefined = undefined;
         let cancionTitulo: string | undefined = undefined;
 
         if (this.selectedAudioFile) {
-          showToast('Recortando y subiendo clip de audio de 30s...', 'info');
+          showToast('Recortando y subiendo clip de audio a la nube...', 'info');
           const startSec = Number(trimmerSlider.value) || 0;
           const wavBlob = await recortarAudioEnCliente(this.selectedAudioFile, startSec, 30);
-          audioClipUrl = URL.createObjectURL(wavBlob);
           cancionTitulo = this.selectedAudioFile.name.replace(/\.[^/.]+$/, '');
           const cloudAudio = await SupabaseService.subirAudioClip(wavBlob, cancionTitulo);
           if (cloudAudio) {
@@ -409,7 +411,7 @@ export class PolaroidsComponent {
         }
 
         const nuevoRecuerdo: Recuerdo = {
-          id: 'polaroid-' + Date.now(),
+          id: 'p_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
           usuarioId: usuarioSesion?.id,
           autorNombre,
           autorApodo,
@@ -420,15 +422,23 @@ export class PolaroidsComponent {
           fotoUrl,
           audioClipUrl,
           cancionTitulo,
-          clipInicio: 0, // Como ya está recortado físicamente a 30s, inicia en 0
+          clipInicio: 0,
           clipDuracion: 30,
           reaccionesCount: 0,
           tieneMiReaccion: false,
           creadoEn: new Date().toISOString(),
         };
 
+        const guardadoOk = await SupabaseService.guardarRecuerdo(nuevoRecuerdo);
+        if (!guardadoOk) {
+          showToast('No se pudo guardar en la base de datos. Intenta nuevamente.', 'alerta');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>Publicar Polaroid</span>';
+          return;
+        }
+
         store.agregarRecuerdo(nuevoRecuerdo);
-        showToast('¡Polaroid publicada con éxito!', 'exito');
+        showToast('¡Polaroid publicada para todo el grupo!', 'exito');
 
         // Limpiar formulario
         form.reset();
