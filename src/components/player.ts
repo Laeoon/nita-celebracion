@@ -2,6 +2,7 @@ import { audioPlayer } from '../services/audio/player';
 import { store } from '../services/store/appStore';
 import { SessionService } from '../services/auth/session';
 import { guardarAudioEnIndexedDB } from '../services/storage/audioStorage';
+import { SupabaseService } from '../services/supabase/client';
 import { showToast } from './toast';
 
 export class PlayerComponent {
@@ -235,13 +236,21 @@ export class PlayerComponent {
       let agregadas = 0;
       let duplicadas = 0;
 
+      showToast('Subiendo música a la nube para todo el grupo...', 'info');
+
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const cleanName = file.name.replace(/\.[^/.]+$/, '');
-        const trackId = 'track-' + Date.now() + '-' + i;
-        const audioUrl = URL.createObjectURL(file);
+        const trackId = 'trk_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
 
-        // Guardar persistente en IndexedDB para que no muera al recargar
+        // Subir a Supabase Storage para que suene en todos los teléfonos
+        let audioUrl = URL.createObjectURL(file);
+        const cloudUrl = await SupabaseService.subirCancion(file, cleanName);
+        if (cloudUrl) {
+          audioUrl = cloudUrl;
+        }
+
+        // Guardar también en IndexedDB local por resiliencia
         await guardarAudioEnIndexedDB(trackId, file);
 
         const ok = store.agregarTrack({

@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import type { Recuerdo, Dedicatoria } from '../../types';
+import type { Recuerdo, Dedicatoria, TrackMusical } from '../../types';
 
 const DEFAULT_URL = 'https://shctuollgoczbhtgcopn.supabase.co';
 const DEFAULT_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNoY3R1b2xsZ29jemJodGdjb3BuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwMjY1MzQsImV4cCI6MjEwODYwMjUzNH0.3s2Hs9tIte6ocnGTdeiC_mEZ6ZiPAp3zJWcrVOWCsDY';
@@ -219,6 +219,90 @@ export class SupabaseService {
         .from('dedicatorias')
         .update({ reacciones_count: count })
         .eq('id', id);
+      return !error;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Sube un archivo MP3 completo al bucket 'clips-30s' (carpeta canciones)
+   */
+  static async subirCancion(blob: Blob, _nombreArchivo?: string): Promise<string | null> {
+    try {
+      const safeId = 'song_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+      const path = `canciones/${safeId}.mp3`;
+      const { data, error } = await supabase.storage.from('clips-30s').upload(path, blob, {
+        contentType: blob.type || 'audio/mpeg',
+        upsert: true,
+      });
+      if (error) {
+        console.error('Error subiendo canción a Supabase Storage:', error);
+        return null;
+      }
+      const { data: publicUrlData } = supabase.storage.from('clips-30s').getPublicUrl(data.path);
+      return publicUrlData.publicUrl;
+    } catch (err) {
+      console.error('Excepción al subir canción a Supabase:', err);
+      return null;
+    }
+  }
+
+  /**
+   * Cargar lista de canciones de la fiesta desde Supabase
+   */
+  static async fetchCanciones(): Promise<TrackMusical[] | null> {
+    try {
+      const { data, error } = await supabase
+        .from('canciones')
+        .select('*')
+        .order('creado_en', { ascending: true });
+
+      if (error) {
+        console.warn('Error obteniendo canciones de Supabase:', error);
+        return null;
+      }
+
+      return (data || []).map((row) => ({
+        id: row.id,
+        titulo: row.titulo,
+        artista: row.artista || 'Mariana “Nita” • Fiesta',
+        audioUrl: row.audio_url,
+      }));
+    } catch (err) {
+      console.warn('Excepción al consultar canciones:', err);
+      return null;
+    }
+  }
+
+  /**
+   * Guardar canción en la base de datos de Supabase
+   */
+  static async guardarCancion(track: TrackMusical): Promise<boolean> {
+    try {
+      const { error } = await supabase.from('canciones').insert({
+        id: track.id,
+        titulo: track.titulo,
+        artista: track.artista,
+        audio_url: track.audioUrl,
+      });
+      if (error) {
+        console.error('Error insertando canción en Supabase:', error);
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error('Excepción al guardar canción:', err);
+      return false;
+    }
+  }
+
+  /**
+   * Eliminar canción de la lista en Supabase
+   */
+  static async eliminarCancion(id: string): Promise<boolean> {
+    try {
+      const { error } = await supabase.from('canciones').delete().eq('id', id);
       return !error;
     } catch {
       return false;

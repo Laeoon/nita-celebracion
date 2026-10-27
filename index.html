@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
 </head>
-<body class="bg-midnight bg-ambient bg-noise min-h-screen text-slate-100 relative pb-16">
+<body class="bg-midnight bg-ambient bg-noise min-h-screen text-slate-100 relative pb-28">
 
   <!-- Luces ambientales animadas en segundo plano -->
   <div class="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
@@ -20,17 +20,33 @@
     <div class="ambient-orb orb-3"></div>
   </div>
 
-  <!-- Header Fijo con Monograma, Segmented Pills y Modo Admin -->
-  <header id="main-header" class="sticky top-0 z-40 px-4 pt-3.5 pb-3 backdrop-blur-xl bg-midnight/90 border-b border-white/10"></header>
+  <!-- Header Superior Fijo -->
+  <header id="main-header" class="sticky top-0 z-40 px-4 pt-3 pb-2.5 backdrop-blur-xl bg-midnight/90 border-b border-white/10"></header>
 
-  <!-- Contenedor Principal (Optimizado para lectura y navegación en móvil) -->
-  <main class="max-w-xl mx-auto px-4 pt-6 space-y-12 relative z-10">
-    <div id="section-countdown"></div>
-    <div id="section-player"></div>
-    <div id="section-polaroids"></div>
-    <div id="section-dedicatorias"></div>
-    <div id="section-closing"></div>
+  <!-- Contenedor de Vistas Móviles tipo App -->
+  <main class="max-w-xl mx-auto px-4 pt-4 relative z-10">
+    <!-- Pestaña 1: Recuerdos (Activa por defecto) -->
+    <div id="view-recuerdos" class="space-y-6">
+      <div id="section-countdown"></div>
+      <div id="section-polaroids"></div>
+    </div>
+
+    <!-- Pestaña 2: Muro de Dedicatorias -->
+    <div id="view-muro" class="hidden space-y-6">
+      <div id="section-dedicatorias"></div>
+    </div>
+
+    <!-- Pestaña 3: Cabina de Música -->
+    <div id="view-musica" class="hidden space-y-6">
+      <div id="section-player"></div>
+    </div>
+
+    <!-- Cierre y Homenaje del Grupo -->
+    <div id="section-closing" class="pt-6"></div>
   </main>
+
+  <!-- Barra Inferior Fija Estilo TikTok (Sin Emojis) -->
+  <nav id="bottom-app-bar" class="fixed bottom-0 left-0 right-0 z-40 bg-midnight/95 backdrop-blur-2xl border-t border-white/10 px-4 py-2"></nav>
 
   <!-- Entrypoint TypeScript -->
   <script type="module" src="/src/main.ts"></script>

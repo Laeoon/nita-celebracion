@@ -1,7 +1,6 @@
 import { store } from '../services/store/appStore';
 import { SessionService } from '../services/auth/session';
 import { showToast } from './toast';
-import type { Dedicatoria } from '../types';
 
 export class DedicatoriasComponent {
   private container: HTMLElement;
@@ -17,105 +16,44 @@ export class DedicatoriasComponent {
   }
 
   public render(): void {
-    const usuario = SessionService.getUsuario();
-
     this.container.innerHTML = `
-      <section class="space-y-6 scroll-mt-28" id="dedicatorias">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <section class="space-y-4 scroll-mt-28" id="dedicatorias">
+        <div class="flex items-center justify-between px-1">
           <div>
             <h3 class="text-xl font-serif font-bold text-white tracking-wide">Muro de Dedicatorias</h3>
-            <p class="text-xs text-neutral-400">Mensajes y deseos que quedan guardados para siempre</p>
+            <p class="text-xs text-neutral-400">Mensajes y recuerdos guardados para siempre</p>
           </div>
+          <span id="dedicatorias-count-badge" class="px-2 py-0.5 rounded-full bg-champagne-400/15 text-champagne-300 font-mono text-[10px]">
+            0 mensajes
+          </span>
         </div>
 
-        <!-- Formulario para dejar dedicatoria -->
-        <div class="glass-panel rounded-3xl p-5 sm:p-6 shadow-glass border border-white/10" id="formulario-dedicatoria">
-          <form id="form-dedicatoria" class="space-y-4">
-            ${!usuario ? `
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-[11px] text-neutral-300 mb-1">Tu Nombre</label>
-                  <input id="input-dedicatoria-autor" type="text" required placeholder="Ej. Wilmer" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400" />
-                </div>
-                <div>
-                  <label class="block text-[11px] text-neutral-300 mb-1">Apodo (Opcional)</label>
-                  <input id="input-dedicatoria-apodo" type="text" placeholder="Ej. Lawi" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400" />
-                </div>
-              </div>
-            ` : `
-              <div class="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs flex items-center justify-between">
-                <span class="text-neutral-400">Escribiendo como:</span>
-                <span class="font-semibold text-champagne-300">${usuario.nombre} ${usuario.apodo ? `(${usuario.apodo})` : ''}</span>
-              </div>
-            `}
-
-            <div>
-              <label class="block text-[11px] text-neutral-300 mb-1">Tu Mensaje para Nita</label>
-              <textarea id="input-dedicatoria-mensaje" rows="3" required placeholder="Escribe aquí tus mejores deseos, chistes internos o palabras de cariño..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-champagne-400"></textarea>
-            </div>
-
-            <button type="submit" id="btn-submit-dedicatoria" class="w-full py-3 rounded-xl btn-primary text-xs uppercase tracking-wider font-semibold shadow-subtle flex items-center justify-center gap-2">
-              <span>Publicar en el Muro</span>
-            </button>
-          </form>
-        </div>
-
-        <!-- Muro de mensajes -->
-        <div id="dedicatorias-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Muro de mensajes en tarjetas -->
+        <div id="dedicatorias-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <!-- Renderizado dinámico -->
         </div>
       </section>
     `;
-
-    this.bindEvents();
-  }
-
-  private bindEvents(): void {
-    const form = document.getElementById('form-dedicatoria') as HTMLFormElement;
-
-    form?.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      const usuarioSesion = SessionService.getUsuario();
-      const autorNombre = usuarioSesion ? usuarioSesion.nombre : (document.getElementById('input-dedicatoria-autor') as HTMLInputElement).value;
-      const autorApodo = usuarioSesion ? usuarioSesion.apodo : (document.getElementById('input-dedicatoria-apodo') as HTMLInputElement)?.value;
-      const mensaje = (document.getElementById('input-dedicatoria-mensaje') as HTMLTextAreaElement).value;
-
-      if (!mensaje.trim()) return;
-
-      const nuevaDedicatoria: Dedicatoria = {
-        id: 'ded-' + Date.now(),
-        usuarioId: usuarioSesion?.id,
-        autorNombre,
-        autorApodo,
-        mensaje,
-        reaccionesCount: 0,
-        tieneMiReaccion: false,
-        creadoEn: new Date().toISOString(),
-      };
-
-      store.agregarDedicatoria(nuevaDedicatoria);
-      showToast('¡Dedicatoria agregada al muro!', 'exito');
-
-      form.reset();
-    });
 
     this.actualizarLista();
   }
 
   private actualizarLista(): void {
     const grid = document.getElementById('dedicatorias-grid');
+    const badge = document.getElementById('dedicatorias-count-badge');
     if (!grid) return;
 
     const dedicatorias = store.getDedicatorias();
     const usuario = SessionService.getUsuario();
     const esAdmin = SessionService.esAdmin();
 
+    if (badge) badge.textContent = `${dedicatorias.length} mensajes`;
+
     if (!dedicatorias.length) {
       grid.innerHTML = `
-        <div class="col-span-full text-center py-12 glass-panel rounded-3xl border border-white/5">
+        <div class="col-span-full text-center py-12 glass-panel rounded-3xl border border-white/5 my-2">
           <p class="text-sm text-neutral-400 font-light">El muro está esperando sus primeras dedicatorias.</p>
-          <p class="text-xs text-champagne-300/70 mt-1">¡Sé el primero en dejarle unas palabras a Nita!</p>
+          <p class="text-xs text-champagne-300/70 mt-1">Toca el botón + en el centro para dejarle tus palabras a Nita.</p>
         </div>
       `;
       return;

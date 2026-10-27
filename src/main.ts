@@ -9,7 +9,7 @@ import { ClosingComponent } from './components/closing';
 import { NavigationComponent } from './components/navigation';
 import { AdminModalComponent } from './components/adminModal';
 import { AuthModalComponent } from './components/authModal';
-
+import { PublishModalComponent } from './components/publishModal';
 import { ParticlesBackground } from './components/particles';
 
 // Inicializar la sesión y validación de tokens
@@ -18,11 +18,21 @@ SessionService.init();
 // Inicializar fondo animado de partículas champaña
 new ParticlesBackground('bg-particles');
 
-// Inicializar componentes
-const navigation = new NavigationComponent('main-header', () => {
-  adminModal.abrir();
+// Modal inferior para publicar fotos o dedicatorias
+const publishModal = new PublishModalComponent(() => {
+  polaroids.render();
+  dedicatorias.render();
 });
 
+// Inicializar navegación (Header + Barra inferior estilo TikTok)
+const navigation = new NavigationComponent(
+  'main-header',
+  'bottom-app-bar',
+  () => adminModal.abrir(),
+  () => publishModal.abrir('selector')
+);
+
+// Inicializar vistas
 new CountdownComponent('section-countdown');
 const player = new PlayerComponent('section-player');
 const polaroids = new PolaroidsComponent('section-polaroids');

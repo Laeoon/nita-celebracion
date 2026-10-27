@@ -64,6 +64,10 @@ class AppStore {
           tieneMiReaccion: this.misLikes.has(d.id),
         }));
       }
+      const cloudCanciones = await SupabaseService.fetchCanciones();
+      if (cloudCanciones !== null && cloudCanciones.length > 0) {
+        this.state.tracks = cloudCanciones;
+      }
       this.guardarEnStorage();
       this.notificar();
 
@@ -88,6 +92,14 @@ class AppStore {
               ...d,
               tieneMiReaccion: this.misLikes.has(d.id),
             }));
+            this.guardarEnStorage();
+            this.notificar();
+          }
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'canciones' }, async () => {
+          const songs = await SupabaseService.fetchCanciones();
+          if (songs && songs.length) {
+            this.state.tracks = songs;
             this.guardarEnStorage();
             this.notificar();
           }
@@ -261,12 +273,14 @@ class AppStore {
     }
     this.state.tracks.push(track);
     this.guardarEnStorage();
+    SupabaseService.guardarCancion(track);
     return true;
   }
 
   eliminarTrack(id: string): void {
     this.state.tracks = this.state.tracks.filter((t) => t.id !== id);
     eliminarAudioDeIndexedDB(id);
+    SupabaseService.eliminarCancion(id);
     this.guardarEnStorage();
   }
 
