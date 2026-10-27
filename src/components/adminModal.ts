@@ -1,5 +1,6 @@
 import QRCode from 'qrcode';
 import { SessionService, TOKEN_OFICIAL } from '../services/auth/session';
+import { SupabaseService } from '../services/supabase/client';
 import { store } from '../services/store/appStore';
 import { showToast } from './toast';
 
@@ -77,8 +78,9 @@ export class AdminModalComponent {
     });
   }
 
-  private renderPanelAdmin(): void {
+  private async renderPanelAdmin(): Promise<void> {
     const inviteUrl = `${window.location.origin}${window.location.pathname}?invitacion=${TOKEN_OFICIAL}`;
+    const usuarios = await SupabaseService.fetchUsuarios();
 
     this.overlay.innerHTML = `
       <div class="glass-panel-elevated rounded-3xl p-6 sm:p-7 max-w-md w-full border border-champagne-400/30 space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto no-scrollbar">
@@ -107,6 +109,31 @@ export class AdminModalComponent {
               Copiar Link
             </button>
           </div>
+        </div>
+
+        <!-- Lista de Amigos Registrados -->
+        <div class="bg-black/40 rounded-2xl p-4 border border-white/10 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-semibold text-champagne-300">Amigos Registrados</h4>
+            <span class="text-[10px] text-neutral-400 font-mono">${usuarios.length} cuentas</span>
+          </div>
+          ${usuarios.length ? `
+            <div class="space-y-1.5 max-h-44 overflow-y-auto no-scrollbar">
+              ${usuarios.map((u) => `
+                <div class="flex items-center justify-between p-2 rounded-xl bg-white/[0.03] text-xs">
+                  <div>
+                    <span class="font-semibold text-white">${u.nombre}</span>
+                    ${u.apodo ? `<span class="text-champagne-300 text-[11px]"> (${u.apodo})</span>` : ''}
+                  </div>
+                  <button type="button" data-delete-user="${u.id}" class="text-neutral-500 hover:text-rose-400 text-xs px-2 py-0.5" title="Eliminar cuenta">
+                    ✕
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          ` : `
+            <p class="text-[11px] text-neutral-500 italic">Aún no hay amigos registrados en la base de datos.</p>
+          `}
         </div>
 
         <!-- Gestión de Playlist -->
@@ -177,6 +204,18 @@ export class AdminModalComponent {
       showToast(`Se agregaron ${files.length} canciones al reproductor`, 'exito');
       this.renderPanelAdmin();
       this.onAdminChange();
+    });
+
+    this.overlay.querySelectorAll('[data-delete-user]').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-delete-user');
+        if (id && confirm('¿Deseas eliminar la cuenta de este usuario?')) {
+          await SupabaseService.eliminarUsuario(id);
+          showToast('Cuenta eliminada', 'info');
+          this.renderPanelAdmin();
+        }
+      });
     });
 
     document.getElementById('btn-descargar-qr')?.addEventListener('click', () => {

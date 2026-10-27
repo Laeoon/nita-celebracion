@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import type { Recuerdo, Dedicatoria, TrackMusical } from '../../types';
+import type { Recuerdo, Dedicatoria, TrackMusical, Usuario } from '../../types';
 
 const DEFAULT_URL = 'https://shctuollgoczbhtgcopn.supabase.co';
 const DEFAULT_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNoY3R1b2xsZ29jemJodGdjb3BuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwMjY1MzQsImV4cCI6MjEwODYwMjUzNH0.3s2Hs9tIte6ocnGTdeiC_mEZ6ZiPAp3zJWcrVOWCsDY';
@@ -329,6 +329,78 @@ export class SupabaseService {
   static async eliminarCancion(id: string): Promise<boolean> {
     try {
       const { error } = await supabase.from('canciones').delete().eq('id', id);
+      return !error;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Guardar nuevo usuario en Supabase
+   */
+  static async guardarUsuario(usuario: Usuario): Promise<boolean> {
+    try {
+      const { error } = await supabase.from('usuarios').upsert({
+        id: usuario.id,
+        nombre: usuario.nombre,
+        apodo: usuario.apodo || null,
+        pin: usuario.pin || null,
+        es_admin: usuario.esAdmin || false,
+        deshabilitado: usuario.deshabilitado || false,
+      });
+      return !error;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Obtener lista de todos los amigos registrados
+   */
+  static async fetchUsuarios(): Promise<Usuario[]> {
+    try {
+      const { data, error } = await supabase
+        .from('usuarios')
+        .select('*')
+        .order('creado_en', { ascending: false });
+
+      if (error) return [];
+
+      return (data || []).map((row) => ({
+        id: row.id,
+        nombre: row.nombre,
+        apodo: row.apodo || undefined,
+        pin: row.pin || undefined,
+        esAdmin: row.es_admin || false,
+        deshabilitado: row.deshabilitado || false,
+        creadoEn: row.creado_en,
+      }));
+    } catch {
+      return [];
+    }
+  }
+
+  /**
+   * Deshabilitar o habilitar una cuenta de invitado
+   */
+  static async deshabilitarUsuario(id: string, deshabilitado: boolean): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('usuarios')
+        .update({ deshabilitado })
+        .eq('id', id);
+      return !error;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Eliminar cuenta de invitado
+   */
+  static async eliminarUsuario(id: string): Promise<boolean> {
+    try {
+      const { error } = await supabase.from('usuarios').delete().eq('id', id);
       return !error;
     } catch {
       return false;

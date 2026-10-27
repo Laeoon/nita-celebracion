@@ -14,6 +14,7 @@ export interface Usuario {
   apodo?: string;
   pin?: string;
   esAdmin: boolean;
+  deshabilitado?: boolean;
   creadoEn?: string;
 }
 

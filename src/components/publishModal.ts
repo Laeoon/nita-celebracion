@@ -117,25 +117,29 @@ export class PublishModalComponent {
 
   private renderSelector(): string {
     return `
-      <div class="space-y-4 text-center py-2">
-        <div>
-          <h3 class="text-lg font-serif font-bold text-white tracking-wide">Compartir en la Celebración</h3>
-          <p class="text-xs text-neutral-400 mt-0.5">Elige qué deseas publicar para Mariana</p>
+      <div class="space-y-3.5 py-1">
+        <div class="text-left pb-1 border-b border-white/10">
+          <span class="text-[10px] uppercase font-mono tracking-widest text-champagne-300 font-semibold">Compartir</span>
+          <h3 class="text-base font-serif font-bold text-white">¿Qué deseas publicar?</h3>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-          <button id="opt-subir-polaroid" class="p-5 rounded-2xl glass-panel border border-champagne-400/30 hover:border-champagne-300 transition text-left space-y-2 group">
-            <span class="text-xs uppercase font-mono tracking-widest text-champagne-300 font-semibold block">Galería</span>
+        <button id="opt-subir-polaroid" class="w-full p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-champagne-400/30 flex items-center justify-between transition text-left group">
+          <div class="space-y-0.5">
+            <span class="text-[10px] uppercase font-mono tracking-widest text-champagne-300 font-semibold">Galería</span>
             <h4 class="text-sm font-semibold text-white group-hover:text-champagne-200">Foto Polaroid</h4>
-            <p class="text-[11px] text-neutral-400 leading-relaxed">Sube una foto del carrete con canción de fondo de 30 segundos.</p>
-          </button>
+            <p class="text-[11px] text-neutral-400">Sube una foto con canción de fondo de 30s</p>
+          </div>
+          <span class="text-champagne-300 text-xl group-hover:translate-x-1 transition-transform">›</span>
+        </button>
 
-          <button id="opt-subir-dedicatoria" class="p-5 rounded-2xl glass-panel border border-white/10 hover:border-champagne-400/40 transition text-left space-y-2 group">
-            <span class="text-xs uppercase font-mono tracking-widest text-neutral-400 font-semibold block">Muro</span>
-            <h4 class="text-sm font-semibold text-white group-hover:text-champagne-200">Dedicatoria</h4>
-            <p class="text-[11px] text-neutral-400 leading-relaxed">Deja un mensaje escrito o graba una nota de voz para Nita.</p>
-          </button>
-        </div>
+        <button id="opt-subir-dedicatoria" class="w-full p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 flex items-center justify-between transition text-left group">
+          <div class="space-y-0.5">
+            <span class="text-[10px] uppercase font-mono tracking-widest text-neutral-400 font-semibold">Muro</span>
+            <h4 class="text-sm font-semibold text-white group-hover:text-champagne-200">Dedicatoria o Audio</h4>
+            <p class="text-[11px] text-neutral-400">Deja un mensaje escrito o graba una nota de voz directa</p>
+          </div>
+          <span class="text-champagne-300 text-xl group-hover:translate-x-1 transition-transform">›</span>
+        </button>
       </div>
     `;
   }
@@ -281,8 +285,8 @@ export class PublishModalComponent {
           `}
 
           <div>
-            <label class="block text-[11px] text-neutral-300 mb-1">Tu Mensaje para Mariana</label>
-            <textarea id="modal-ded-mensaje" rows="3" required placeholder="Escribe aquí tus mejores deseos, anécdotas o palabras de cariño..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-champagne-400"></textarea>
+            <label class="block text-[11px] text-neutral-300 mb-1">Mensaje Escrito (Opcional si grabas voz)</label>
+            <textarea id="modal-ded-mensaje" rows="3" placeholder="Escribe tus palabras o graba un audio abajo..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-champagne-400"></textarea>
           </div>
 
           <!-- Grabador de Nota de Voz (Hasta 30s) -->
@@ -580,7 +584,10 @@ export class PublishModalComponent {
       const autorApodo = usuario ? usuario.apodo : (document.getElementById('modal-ded-apodo') as HTMLInputElement)?.value;
       const mensaje = (document.getElementById('modal-ded-mensaje') as HTMLTextAreaElement).value.trim();
 
-      if (!mensaje) return;
+      if (!mensaje && !this.recordedVoiceBlob) {
+        showToast('Escribe un mensaje o graba una nota de voz', 'alerta');
+        return;
+      }
 
       const submitBtn = document.getElementById('btn-modal-submit-dedicatoria') as HTMLButtonElement;
       submitBtn.disabled = true;
@@ -601,7 +608,7 @@ export class PublishModalComponent {
         usuarioId: usuario?.id,
         autorNombre,
         autorApodo,
-        mensaje,
+        mensaje: mensaje || 'Nota de voz para Mariana',
         audioUrl,
         reaccionesCount: 0,
         tieneMiReaccion: false,

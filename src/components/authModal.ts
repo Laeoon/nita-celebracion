@@ -1,4 +1,5 @@
 import { SessionService } from '../services/auth/session';
+import { SupabaseService } from '../services/supabase/client';
 import { showToast } from './toast';
 import type { Usuario } from '../types';
 
@@ -166,10 +167,12 @@ export class AuthModalComponent {
         apodo: apodo || undefined,
         pin,
         esAdmin: false,
+        deshabilitado: false,
         creadoEn: new Date().toISOString(),
       };
 
       SessionService.guardarUsuario(nuevoUsuario);
+      SupabaseService.guardarUsuario(nuevoUsuario);
       showToast(`¡Bienvenid@, ${nombre}!`, 'exito');
 
       this.overlay.innerHTML = '';
