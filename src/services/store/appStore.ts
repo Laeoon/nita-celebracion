@@ -65,7 +65,7 @@ class AppStore {
         }));
       }
       const cloudCanciones = await SupabaseService.fetchCanciones();
-      if (cloudCanciones !== null && cloudCanciones.length > 0) {
+      if (cloudCanciones !== null) {
         this.state.tracks = cloudCanciones;
       }
       this.guardarEnStorage();
@@ -136,6 +136,11 @@ class AppStore {
         console.error('Error parseando datos de localStorage');
       }
     }
+    // Limpiar pistas con URLs temporales blob muertas
+    if (this.state.tracks && this.state.tracks.length) {
+      this.state.tracks = this.state.tracks.filter((t) => !t.audioUrl || !t.audioUrl.startsWith('blob:'));
+    }
+
     // Si la lista de tracks está vacía, cargar de fábrica si hay pistas oficiales
     if (!this.state.tracks.length && PLAYLIST_OFICIAL.length) {
       this.state.tracks = [...PLAYLIST_OFICIAL];
@@ -265,12 +270,10 @@ class AppStore {
 
   // --- TRACKS ---
   agregarTrack(track: TrackMusical): boolean {
-    const yaExiste = this.state.tracks.some(
-      (t) => t.titulo.trim().toLowerCase() === track.titulo.trim().toLowerCase()
+    // Reemplazar pista previa si tenía el mismo título o id
+    this.state.tracks = this.state.tracks.filter(
+      (t) => t.id !== track.id && t.titulo.trim().toLowerCase() !== track.titulo.trim().toLowerCase()
     );
-    if (yaExiste) {
-      return false;
-    }
     this.state.tracks.push(track);
     this.guardarEnStorage();
     SupabaseService.guardarCancion(track);

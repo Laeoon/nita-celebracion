@@ -1,6 +1,7 @@
 import QRCode from 'qrcode';
 import { SessionService, TOKEN_OFICIAL } from '../services/auth/session';
 import { SupabaseService } from '../services/supabase/client';
+import { audioPlayer } from '../services/audio/player';
 import { store } from '../services/store/appStore';
 import { showToast } from './toast';
 
@@ -152,6 +153,20 @@ export class AdminModalComponent {
           </label>
         </div>
 
+        <!-- Modo DJ Sincronizado (Sonido Global Experimental) -->
+        <div class="bg-black/40 rounded-2xl p-4 border border-white/10 space-y-2">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-semibold text-champagne-300">Modo DJ (Sonido Global)</h4>
+            <span class="text-[9px] uppercase font-mono px-2 py-0.5 rounded ${audioPlayer.getIsDjMode() ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-white/5 text-neutral-400'}">
+              ${audioPlayer.getIsDjMode() ? 'Sincronizado' : 'Libre'}
+            </span>
+          </div>
+          <p class="text-[11px] text-neutral-400 leading-relaxed">Si lo activas, cuando le des play a una canción, sonará sincronizada en los teléfonos de todos al mismo tiempo.</p>
+          <button type="button" id="btn-toggle-dj-mode" class="w-full py-2 px-3 rounded-xl ${audioPlayer.getIsDjMode() ? 'bg-emerald-500/20 text-emerald-200 border border-emerald-500/40 font-semibold' : 'btn-secondary text-neutral-300'} text-xs font-medium transition">
+            ${audioPlayer.getIsDjMode() ? 'Desactivar Modo DJ' : 'Activar Modo DJ Sincronizado'}
+          </button>
+        </div>
+
         <!-- Acciones de administración -->
         <div class="space-y-2 pt-2 border-t border-white/10">
           <button id="btn-vaciar-todo" class="w-full py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-medium transition">
@@ -204,6 +219,13 @@ export class AdminModalComponent {
       showToast(`Se agregaron ${files.length} canciones al reproductor`, 'exito');
       this.renderPanelAdmin();
       this.onAdminChange();
+    });
+
+    document.getElementById('btn-toggle-dj-mode')?.addEventListener('click', () => {
+      const nuevo = !audioPlayer.getIsDjMode();
+      audioPlayer.setDjMode(nuevo);
+      showToast(nuevo ? 'Modo DJ activado: tu música sonará en todos los teléfonos' : 'Modo DJ desactivado: reproducción libre', 'info');
+      this.renderPanelAdmin();
     });
 
     this.overlay.querySelectorAll('[data-delete-user]').forEach((btn) => {

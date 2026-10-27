@@ -1,4 +1,6 @@
 import { store } from '../store/appStore';
+import { supabase } from '../supabase/client';
+import { SessionService } from '../auth/session';
 import type { TrackMusical } from '../../types';
 
 class AudioPlayerService {
@@ -21,13 +23,23 @@ class AudioPlayerService {
 
   private listeners: Array<() => void> = [];
 
+  private isDjMode: boolean = false;
+
   constructor() {
     this.setupAudioListeners();
+    this.iniciarDjSync();
   }
 
   private setupAudioListeners(): void {
     this.audio.addEventListener('ended', () => {
-      this.next();
+      const tracks = store.getTracks();
+      if (tracks.length === 1) {
+        // Si hay una sola canción, repite en bucle para que nunca muera la fiesta
+        this.audio.currentTime = 0;
+        this.audio.play();
+      } else {
+        this.next();
+      }
     });
 
     this.audio.addEventListener('error', (e) => {
@@ -39,6 +51,64 @@ class AudioPlayerService {
     this.polaroidAudio.addEventListener('ended', () => {
       this.detenerPolaroidAudio();
     });
+  }
+
+  private iniciarDjSync(): void {
+    try {
+      supabase
+        .channel('dj_sync')
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'comentarios', filter: 'id=eq.dj-global-sync' }, (payload) => {
+          const nuevo = payload.new as { texto: string };
+          if (nuevo && nuevo.texto) {
+            try {
+              const data = JSON.parse(nuevo.texto);
+              if (data.activo && !SessionService.esAdmin()) {
+                this.syncFromDj(data.currentIndex, data.isPlaying);
+              }
+            } catch {}
+          }
+        })
+        .subscribe();
+    } catch (err) {
+      console.warn('Error iniciando DJ sync:', err);
+    }
+  }
+
+  private syncFromDj(index: number, isPlaying: boolean): void {
+    const tracks = store.getTracks();
+    if (!tracks.length || index < 0 || index >= tracks.length) return;
+    this.currentIndex = index;
+    if (isPlaying && !this.isPlaying) {
+      this.play(index);
+    } else if (!isPlaying && this.isPlaying) {
+      this.pause();
+    }
+  }
+
+  setDjMode(activo: boolean): void {
+    this.isDjMode = activo;
+    this.broadcastDjState();
+    this.notificar();
+  }
+
+  getIsDjMode(): boolean {
+    return this.isDjMode;
+  }
+
+  broadcastDjState(): void {
+    if (!SessionService.esAdmin()) return;
+    supabase
+      .from('comentarios')
+      .update({
+        texto: JSON.stringify({
+          activo: this.isDjMode,
+          currentIndex: this.currentIndex,
+          isPlaying: this.isPlaying,
+          timestamp: Date.now(),
+        }),
+      })
+      .eq('id', 'dj-global-sync')
+      .then();
   }
 
   private initWebAudio(): void {
@@ -111,6 +181,7 @@ class AudioPlayerService {
     this.audio.play().then(() => {
       this.isPlaying = true;
       this.iniciarProgreso();
+      this.broadcastDjState();
       this.notificar();
 
       try {
@@ -132,6 +203,7 @@ class AudioPlayerService {
     this.audio.pause();
     this.isPlaying = false;
     this.detenerProgreso();
+    this.broadcastDjState();
     this.notificar();
   }
 
