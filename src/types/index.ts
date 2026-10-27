@@ -42,6 +42,7 @@ export interface Dedicatoria {
   autorNombre: string;
   autorApodo?: string;
   mensaje: string;
+  audioUrl?: string;
   reaccionesCount?: number;
   tieneMiReaccion?: boolean;
   creadoEn: string;

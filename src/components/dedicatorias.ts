@@ -1,4 +1,5 @@
 import { store } from '../services/store/appStore';
+import { audioPlayer } from '../services/audio/player';
 import { SessionService } from '../services/auth/session';
 import { showToast } from './toast';
 
@@ -13,6 +14,7 @@ export class DedicatoriasComponent {
     this.render();
 
     store.subscribe(() => this.actualizarLista());
+    audioPlayer.subscribe(() => this.actualizarMiniPlayers());
   }
 
   public render(): void {
@@ -90,6 +92,26 @@ export class DedicatoriasComponent {
             ${d.mensaje}
           </p>
 
+          <!-- Reproductor de Nota de Voz si existe -->
+          ${d.audioUrl ? `
+            <div class="bg-black/45 rounded-xl p-2.5 border border-champagne-400/30 flex items-center gap-2.5 shadow-sm" data-polaroid-player="${d.id}">
+              <button type="button" data-play-voice="${d.id}" class="w-8 h-8 rounded-full bg-champagne-400 text-midnight flex items-center justify-center flex-shrink-0 shadow hover:bg-champagne-300 transition" title="Escuchar nota de voz">
+                <svg data-clip-icon="${d.id}" class="w-3.5 h-3.5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"></path>
+                </svg>
+              </button>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between text-[10px] font-mono text-champagne-300 mb-1">
+                  <span>Nota de voz</span>
+                  <span data-clip-time="${d.id}">0:30</span>
+                </div>
+                <div class="w-full h-1 bg-white/20 rounded-full overflow-hidden">
+                  <div data-clip-bar="${d.id}" class="h-full bg-champagne-400 w-0 transition-all duration-100"></div>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+
           <!-- Barra de reacciones y comentarios -->
           <div class="pt-2 border-t border-white/5 flex items-center justify-between text-xs text-neutral-400">
             <button data-reaccionar-ded-id="${d.id}" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full ${d.tieneMiReaccion ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30' : 'bg-white/5 hover:bg-white/10 text-neutral-300'} font-medium transition active:scale-95" title="Me gusta">
@@ -145,6 +167,17 @@ export class DedicatoriasComponent {
       });
     });
 
+    grid.querySelectorAll('[data-play-voice]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-play-voice');
+        if (!id) return;
+        const ded = dedicatorias.find((item) => item.id === id);
+        if (ded?.audioUrl) {
+          audioPlayer.playPolaroid(id, ded.audioUrl, 0, 35);
+        }
+      });
+    });
+
     // Envío de comentarios
     grid.querySelectorAll('[data-comment-form]').forEach((form) => {
       form.addEventListener('submit', (e) => {
@@ -182,6 +215,42 @@ export class DedicatoriasComponent {
         }
       });
     });
+  }
+
+  private actualizarMiniPlayers(): void {
+    const estado = audioPlayer.getEstado();
+
+    document.querySelectorAll('[data-polaroid-player]').forEach((wrap) => {
+      const id = wrap.getAttribute('data-polaroid-player');
+      if (!id) return;
+
+      const bar = wrap.querySelector(`[data-clip-bar="${id}"]`) as HTMLElement;
+      const timeEl = wrap.querySelector(`[data-clip-time="${id}"]`);
+      const icon = wrap.querySelector(`[data-clip-icon="${id}"]`);
+
+      const isActive = estado.activePolaroidId === id && estado.isPolaroidPlaying;
+
+      if (isActive) {
+        const pct = Math.min(100, (estado.polaroidCurrentTime / 30) * 100);
+        if (bar) bar.style.width = `${pct}%`;
+        if (timeEl) timeEl.textContent = this.formatTime(Math.min(30, estado.polaroidCurrentTime));
+        if (icon) {
+          icon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>';
+        }
+      } else {
+        if (bar) bar.style.width = '0%';
+        if (timeEl) timeEl.textContent = 'Audio';
+        if (icon) {
+          icon.innerHTML = '<path d="M8 5v14l11-7z"></path>';
+        }
+      }
+    });
+  }
+
+  private formatTime(seg: number): string {
+    const m = Math.floor(seg / 60);
+    const s = Math.floor(seg % 60);
+    return `${m}:${String(s).padStart(2, '0')}`;
   }
 
   private obtenerMonograma(nombre: string): string {

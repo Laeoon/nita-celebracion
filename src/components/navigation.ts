@@ -59,37 +59,47 @@ export class NavigationComponent {
       </div>
     `;
 
-    // Barra de navegación inferior estilo TikTok (sin emojis, tipografía limpia)
+    // Barra de navegación inferior simétrica estilo TikTok (5 columnas matemáticas, sin emojis)
     this.bottomBarContainer.innerHTML = `
-      <div class="max-w-md mx-auto flex items-center justify-around">
-        <!-- Pestaña Recuerdos -->
-        <button type="button" data-tab="recuerdos" class="tab-btn flex-1 py-1 flex flex-col items-center justify-center transition ${this.activeTab === 'recuerdos' ? 'text-champagne-300 font-semibold' : 'text-neutral-400 hover:text-white'}">
+      <div class="max-w-md mx-auto grid grid-cols-5 items-center justify-items-center text-center">
+        <!-- Col 1: Pestaña Recuerdos -->
+        <button type="button" data-tab="recuerdos" class="w-full py-1 flex flex-col items-center justify-center transition ${this.activeTab === 'recuerdos' ? 'text-champagne-300 font-semibold' : 'text-neutral-400 hover:text-white'}">
           <span class="text-xs font-medium tracking-wide">Recuerdos</span>
-          <span class="w-1 h-1 rounded-full bg-champagne-300 mt-1 transition-opacity ${this.activeTab === 'recuerdos' ? 'opacity-100' : 'opacity-0'}"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-champagne-300 mt-1 transition-opacity ${this.activeTab === 'recuerdos' ? 'opacity-100' : 'opacity-0'}"></span>
         </button>
 
-        <!-- Pestaña Muro -->
-        <button type="button" data-tab="muro" class="tab-btn flex-1 py-1 flex flex-col items-center justify-center transition ${this.activeTab === 'muro' ? 'text-champagne-300 font-semibold' : 'text-neutral-400 hover:text-white'}">
+        <!-- Col 2: Pestaña Muro -->
+        <button type="button" data-tab="muro" class="w-full py-1 flex flex-col items-center justify-center transition ${this.activeTab === 'muro' ? 'text-champagne-300 font-semibold' : 'text-neutral-400 hover:text-white'}">
           <span class="text-xs font-medium tracking-wide">Muro</span>
-          <span class="w-1 h-1 rounded-full bg-champagne-300 mt-1 transition-opacity ${this.activeTab === 'muro' ? 'opacity-100' : 'opacity-0'}"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-champagne-300 mt-1 transition-opacity ${this.activeTab === 'muro' ? 'opacity-100' : 'opacity-0'}"></span>
         </button>
 
-        <!-- Botón Central + Estilo TikTok -->
-        <div class="px-2">
-          <button type="button" id="btn-bottom-publish" class="w-11 h-10 rounded-2xl bg-gradient-to-r from-champagne-400 to-champagne-300 text-midnight flex items-center justify-center font-bold text-xl shadow-champagne-glow active:scale-95 transition-transform" title="Compartir">
+        <!-- Col 3: Botón Central + (Centro Absoluto) -->
+        <div class="flex items-center justify-center w-full">
+          <button type="button" id="btn-bottom-publish" class="w-12 h-10 rounded-2xl bg-gradient-to-r from-champagne-400 to-champagne-300 text-midnight flex items-center justify-center font-bold text-2xl shadow-champagne-glow active:scale-95 transition-transform" title="Compartir">
             +
           </button>
         </div>
 
-        <!-- Pestaña Música -->
-        <button type="button" data-tab="musica" class="tab-btn flex-1 py-1 flex flex-col items-center justify-center transition ${this.activeTab === 'musica' ? 'text-champagne-300 font-semibold' : 'text-neutral-400 hover:text-white'}">
+        <!-- Col 4: Pestaña Música -->
+        <button type="button" data-tab="musica" class="w-full py-1 flex flex-col items-center justify-center transition ${this.activeTab === 'musica' ? 'text-champagne-300 font-semibold' : 'text-neutral-400 hover:text-white'}">
           <span class="text-xs font-medium tracking-wide">Música</span>
-          <span class="w-1 h-1 rounded-full bg-champagne-300 mt-1 transition-opacity ${this.activeTab === 'musica' ? 'opacity-100' : 'opacity-0'}"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-champagne-300 mt-1 transition-opacity ${this.activeTab === 'musica' ? 'opacity-100' : 'opacity-0'}"></span>
+        </button>
+
+        <!-- Col 5: Botón Admin -->
+        <button type="button" id="btn-bottom-admin" class="w-full py-1 flex flex-col items-center justify-center transition ${esAdmin ? 'text-champagne-300 font-semibold' : 'text-neutral-400 hover:text-white'}">
+          <span class="text-xs font-medium tracking-wide">${esAdmin ? 'Admin' : 'Acceso'}</span>
+          <span class="w-1.5 h-1.5 rounded-full ${esAdmin ? 'bg-champagne-300' : 'bg-transparent'} mt-1"></span>
         </button>
       </div>
     `;
 
     document.getElementById('btn-header-admin')?.addEventListener('click', () => {
+      this.onAdminClick();
+    });
+
+    document.getElementById('btn-bottom-admin')?.addEventListener('click', () => {
       this.onAdminClick();
     });
 

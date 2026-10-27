@@ -162,6 +162,7 @@ export class SupabaseService {
         autorNombre: row.autor_nombre,
         autorApodo: row.autor_apodo,
         mensaje: row.mensaje,
+        audioUrl: row.audio_url || undefined,
         reaccionesCount: row.reacciones_count || 0,
         creadoEn: row.creado_en,
       }));
@@ -182,6 +183,7 @@ export class SupabaseService {
         autor_nombre: dedicatoria.autorNombre,
         autor_apodo: dedicatoria.autorApodo || null,
         mensaje: dedicatoria.mensaje,
+        audio_url: dedicatoria.audioUrl || null,
         reacciones_count: dedicatoria.reaccionesCount || 0,
       });
       if (error) {
@@ -222,6 +224,30 @@ export class SupabaseService {
       return !error;
     } catch {
       return false;
+    }
+  }
+
+  /**
+   * Sube una nota de voz grabada desde el móvil al bucket 'clips-30s'
+   */
+  static async subirNotaVoz(blob: Blob): Promise<string | null> {
+    try {
+      const ext = blob.type.includes('mp4') ? 'm4a' : blob.type.includes('ogg') ? 'ogg' : 'webm';
+      const safeId = 'voice_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+      const path = `voces/${safeId}.${ext}`;
+      const { data, error } = await supabase.storage.from('clips-30s').upload(path, blob, {
+        contentType: blob.type || 'audio/webm',
+        upsert: true,
+      });
+      if (error) {
+        console.error('Error subiendo nota de voz a Supabase Storage:', error);
+        return null;
+      }
+      const { data: publicUrlData } = supabase.storage.from('clips-30s').getPublicUrl(data.path);
+      return publicUrlData.publicUrl;
+    } catch (err) {
+      console.error('Excepción al subir nota de voz a Supabase:', err);
+      return null;
     }
   }
 

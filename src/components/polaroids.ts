@@ -6,9 +6,11 @@ import type { CategoriaRecuerdo } from '../types';
 
 export class PolaroidsComponent {
   private container: HTMLElement;
-  private autoScrollInterval: number | null = null;
+  private animFrameId: number | null = null;
   private isUserInteracting: boolean = false;
   private activeDiveOutIndex: number | null = null;
+  private touchStartX: number = 0;
+  private touchStartY: number = 0;
 
   constructor(containerId: string) {
     const el = document.getElementById(containerId);
@@ -59,15 +61,15 @@ export class PolaroidsComponent {
           </div>
         </div>
 
-        <!-- Carrusel Horizontal de Polaroids -->
-        <div id="polaroid-carousel-wrapper" class="relative -mx-4 sm:mx-0">
+        <!-- Carrusel Continuo Infinito de Polaroids -->
+        <div id="polaroid-carousel-wrapper" class="relative -mx-4 sm:mx-0 overflow-hidden py-1">
           <div id="polaroid-carousel" class="flex gap-4 overflow-x-auto snap-x snap-mandatory px-4 sm:px-1 pb-4 pt-1 no-scrollbar select-none" style="scroll-behavior: smooth;">
             <!-- Renderizado dinámico de tarjetas -->
           </div>
         </div>
 
-        <!-- Visor Fullscreen "Dive Out" con animación y botón Atrás -->
-        <div id="polaroid-dive-out-modal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl hidden items-center justify-center p-4">
+        <!-- Visor Fullscreen "Dive Out" con fondo blindado, flechas laterales y swipe -->
+        <div id="polaroid-dive-out-modal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl hidden items-center justify-center p-3 sm:p-4 select-none">
           <!-- Contenido dinámico del Dive Out -->
         </div>
       </section>
@@ -75,7 +77,7 @@ export class PolaroidsComponent {
 
     this.bindEvents();
     this.actualizarLista();
-    this.iniciarAutoScroll();
+    this.iniciarMarqueeContinuo();
   }
 
   private bindEvents(): void {
@@ -95,7 +97,7 @@ export class PolaroidsComponent {
     });
 
     const carousel = document.getElementById('polaroid-carousel');
-    // Pausar auto-scroll al interactuar
+    // Congelar carrusel inmediatamente al apoyar el dedo o cursor
     carousel?.addEventListener('touchstart', () => {
       this.isUserInteracting = true;
     }, { passive: true });
@@ -103,8 +105,18 @@ export class PolaroidsComponent {
     carousel?.addEventListener('touchend', () => {
       setTimeout(() => {
         this.isUserInteracting = false;
-      }, 3500);
+      }, 3000);
     }, { passive: true });
+
+    carousel?.addEventListener('pointerdown', () => {
+      this.isUserInteracting = true;
+    });
+
+    carousel?.addEventListener('pointerup', () => {
+      setTimeout(() => {
+        this.isUserInteracting = false;
+      }, 2500);
+    });
 
     carousel?.addEventListener('mouseenter', () => {
       this.isUserInteracting = true;
@@ -115,25 +127,37 @@ export class PolaroidsComponent {
     });
   }
 
-  private iniciarAutoScroll(): void {
-    if (this.autoScrollInterval) {
-      clearInterval(this.autoScrollInterval);
+  // --- DESPLAZAMIENTO SUAVE CONTINUO MARQUEE POR GPU ---
+  private iniciarMarqueeContinuo(): void {
+    if (this.animFrameId) {
+      cancelAnimationFrame(this.animFrameId);
     }
 
-    this.autoScrollInterval = window.setInterval(() => {
+    let lastTime = performance.now();
+
+    const loop = (now: number) => {
+      const delta = now - lastTime;
+      lastTime = now;
+
       const carousel = document.getElementById('polaroid-carousel');
-      if (!carousel || this.isUserInteracting || this.activeDiveOutIndex !== null) return;
+      if (carousel && !this.isUserInteracting && this.activeDiveOutIndex === null) {
+        const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+        if (maxScroll > 15) {
+          // Desplazamiento sutil a velocidad constante (60px por segundo)
+          const step = (delta / 1000) * 35;
+          carousel.scrollLeft += step;
 
-      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-      if (maxScroll <= 10) return;
-
-      // Desplazamiento sutil hacia la derecha, reinicia suave al llegar al final
-      if (carousel.scrollLeft >= maxScroll - 5) {
-        carousel.scrollTo({ left: 0, behavior: 'smooth' });
-      } else {
-        carousel.scrollBy({ left: 240, behavior: 'smooth' });
+          // Bucle continuo: al llegar al final, vuelve suavemente al principio
+          if (carousel.scrollLeft >= maxScroll - 1) {
+            carousel.scrollLeft = 1;
+          }
+        }
       }
-    }, 4500);
+
+      this.animFrameId = requestAnimationFrame(loop);
+    };
+
+    this.animFrameId = requestAnimationFrame(loop);
   }
 
   private actualizarLista(): void {
@@ -315,7 +339,7 @@ export class PolaroidsComponent {
     });
   }
 
-  // --- TRANSICIÓN "DIVE OUT" (PANTALLA COMPLETA CON ZOOM) ---
+  // --- TRANSICIÓN "DIVE OUT" (PANTALLA COMPLETA CON BLOQUEO Y FLECHAS LATERALES) ---
   private abrirDiveOut(index: number): void {
     const recuerdos = store.getRecuerdosFiltrados();
     const recuerdo = recuerdos[index];
@@ -325,25 +349,44 @@ export class PolaroidsComponent {
     const modal = document.getElementById('polaroid-dive-out-modal');
     if (!modal) return;
 
-    // Registrar estado en el historial para soportar el botón Atrás nativo
+    // Bloqueo estricto del scroll del fondo para que nada se mueva detrás
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
+    // Registrar estado en el historial para soportar el botón Atrás nativo del teléfono
     window.history.pushState({ modal: 'polaroid-dive-out', index }, '');
 
     modal.classList.remove('hidden');
     modal.classList.add('flex');
 
     modal.innerHTML = `
-      <div class="relative w-full max-w-sm rounded-3xl bg-neutral-900 border border-white/15 p-5 text-white shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-300 max-h-[92vh] overflow-y-auto no-scrollbar">
+      <!-- Flecha Flotante Lateral Izquierda (<) -->
+      ${index > 0 ? `
+        <button id="btn-dive-arrow-prev" class="fixed left-3 top-1/2 -translate-y-1/2 z-50 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 border border-champagne-400/40 text-champagne-300 flex items-center justify-center text-xl font-bold shadow-2xl transition active:scale-95" title="Anterior">
+          ‹
+        </button>
+      ` : ''}
+
+      <!-- Flecha Flotante Lateral Derecha (>) -->
+      ${index < recuerdos.length - 1 ? `
+        <button id="btn-dive-arrow-next" class="fixed right-3 top-1/2 -translate-y-1/2 z-50 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 border border-champagne-400/40 text-champagne-300 flex items-center justify-center text-xl font-bold shadow-2xl transition active:scale-95" title="Siguiente">
+          ›
+        </button>
+      ` : ''}
+
+      <!-- Tarjeta ampliada centrada -->
+      <div id="dive-out-card-panel" class="relative w-full max-w-sm rounded-3xl bg-neutral-950/98 border border-champagne-400/30 p-5 text-white shadow-[0_25px_60px_rgba(0,0,0,0.9)] space-y-4 max-h-[88vh] overflow-y-auto no-scrollbar transform transition-all duration-300">
         <!-- Barra superior: cerrar y contador -->
         <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
           <span class="text-xs font-mono text-champagne-300">
             Foto ${index + 1} de ${recuerdos.length}
           </span>
-          <button id="btn-cerrar-dive-out" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-sm transition">
+          <button id="btn-cerrar-dive-out" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-sm transition" title="Cerrar">
             ✕
           </button>
         </div>
 
-        <!-- Foto ampliada con marco de lujo -->
+        <!-- Foto ampliada -->
         <div class="w-full aspect-square rounded-2xl overflow-hidden bg-black/60 shadow-lg relative">
           <img src="${recuerdo.fotoUrl}" alt="${recuerdo.titulo}" class="w-full h-full object-contain" />
           <span class="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-mono uppercase tracking-wider text-champagne-300 border border-white/10">
@@ -369,7 +412,7 @@ export class PolaroidsComponent {
           </p>
         </div>
 
-        <!-- Mini-reproductor y controles de cambio de foto -->
+        <!-- Mini-reproductor de 30s -->
         ${recuerdo.audioClipUrl ? `
           <div class="bg-black/50 rounded-2xl p-3 border border-white/10 flex items-center gap-3">
             <button type="button" id="btn-dive-out-play" class="w-9 h-9 rounded-full bg-champagne-400 text-midnight flex items-center justify-center flex-shrink-0 shadow hover:bg-champagne-300 transition">
@@ -387,16 +430,6 @@ export class PolaroidsComponent {
             </div>
           </div>
         ` : ''}
-
-        <!-- Navegación entre fotos en primer plano -->
-        <div class="flex items-center justify-between pt-2 border-t border-white/10">
-          <button id="btn-dive-out-prev" class="px-3.5 py-1.5 rounded-xl btn-secondary text-xs font-medium" ${index === 0 ? 'disabled style="opacity:0.4"' : ''}>
-            Anterior
-          </button>
-          <button id="btn-dive-out-next" class="px-3.5 py-1.5 rounded-xl btn-secondary text-xs font-medium" ${index === recuerdos.length - 1 ? 'disabled style="opacity:0.4"' : ''}>
-            Siguiente
-          </button>
-        </div>
       </div>
     `;
 
@@ -408,13 +441,40 @@ export class PolaroidsComponent {
       if (e.target === modal) this.cerrarDiveOut(true);
     };
 
-    document.getElementById('btn-dive-out-prev')?.addEventListener('click', () => {
+    document.getElementById('btn-dive-arrow-prev')?.addEventListener('click', (e) => {
+      e.stopPropagation();
       if (index > 0) this.abrirDiveOut(index - 1);
     });
 
-    document.getElementById('btn-dive-out-next')?.addEventListener('click', () => {
+    document.getElementById('btn-dive-arrow-next')?.addEventListener('click', (e) => {
+      e.stopPropagation();
       if (index < recuerdos.length - 1) this.abrirDiveOut(index + 1);
     });
+
+    // Soporte de gesto táctil Swipe (deslizar a la izquierda o derecha en la pantalla)
+    const cardPanel = document.getElementById('dive-out-card-panel');
+    cardPanel?.addEventListener('touchstart', (e) => {
+      this.touchStartX = e.changedTouches[0].screenX;
+      this.touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    cardPanel?.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].screenX;
+      const touchEndY = e.changedTouches[0].screenY;
+      const deltaX = touchEndX - this.touchStartX;
+      const deltaY = touchEndY - this.touchStartY;
+
+      // Si el desplazamiento horizontal supera 45px y es mayor al vertical: cambiar foto
+      if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX < 0 && index < recuerdos.length - 1) {
+          // Deslizó hacia la izquierda -> siguiente
+          this.abrirDiveOut(index + 1);
+        } else if (deltaX > 0 && index > 0) {
+          // Deslizó hacia la derecha -> anterior
+          this.abrirDiveOut(index - 1);
+        }
+      }
+    }, { passive: true });
 
     document.getElementById('btn-dive-out-play')?.addEventListener('click', () => {
       if (recuerdo.audioClipUrl) {
@@ -426,6 +486,10 @@ export class PolaroidsComponent {
   private cerrarDiveOut(triggerHistoryBack: boolean = true): void {
     if (this.activeDiveOutIndex === null) return;
     this.activeDiveOutIndex = null;
+
+    // Restaurar scroll de fondo
+    document.body.style.overflow = '';
+    document.body.style.touchAction = '';
 
     const modal = document.getElementById('polaroid-dive-out-modal');
     if (modal) {
@@ -468,7 +532,6 @@ export class PolaroidsComponent {
       }
     });
 
-    // Actualizar también en el Dive Out si coincide
     const diveOutBar = document.getElementById('dive-out-clip-bar');
     const diveOutPlayIcon = document.getElementById('dive-out-play-icon');
     if (diveOutBar && diveOutPlayIcon) {
@@ -490,9 +553,9 @@ export class PolaroidsComponent {
   }
 
   destroy(): void {
-    if (this.autoScrollInterval) {
-      clearInterval(this.autoScrollInterval);
-      this.autoScrollInterval = null;
+    if (this.animFrameId) {
+      cancelAnimationFrame(this.animFrameId);
+      this.animFrameId = null;
     }
   }
 }

@@ -16,11 +16,21 @@ export class PublishModalComponent {
   private trimmerDuration: number = 0;
   private onPublishSuccess: () => void;
 
+  // Estado para la grabación de notas de voz
+  private mediaRecorder: MediaRecorder | null = null;
+  private voiceChunks: Blob[] = [];
+  private recordedVoiceBlob: Blob | null = null;
+  private voiceAudioPreview: HTMLAudioElement = new Audio();
+  private voiceRecordTimer: number | null = null;
+  private voiceSeconds: number = 0;
+  private isRecordingVoice: boolean = false;
+  private voiceMediaStream: MediaStream | null = null;
+
   constructor(onPublishSuccess: () => void) {
     this.onPublishSuccess = onPublishSuccess;
     this.overlay = document.createElement('div');
     this.overlay.id = 'publish-modal-overlay';
-    this.overlay.className = 'fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity duration-300';
+    this.overlay.className = 'fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity duration-300';
     document.body.appendChild(this.overlay);
 
     audioPlayer.registrarPreviewAudio(this.previewAudio);
@@ -29,10 +39,18 @@ export class PublishModalComponent {
       const btn = document.getElementById('btn-modal-preview-trimmer');
       if (btn) btn.textContent = 'Escuchar 30s';
     };
+
+    this.voiceAudioPreview.onended = () => {
+      const btn = document.getElementById('btn-play-voice-preview');
+      if (btn) btn.textContent = 'Escuchar';
+    };
   }
 
   abrir(modoInicial: 'selector' | 'polaroid' | 'dedicatoria' = 'selector'): void {
     this.currentMode = modoInicial;
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
     this.overlay.classList.remove('hidden');
     this.overlay.classList.add('flex');
     this.render();
@@ -40,11 +58,16 @@ export class PublishModalComponent {
 
   cerrar(): void {
     this.detenerPreviewAudio();
+    this.cancelarGrabacionVoz();
+    document.body.style.overflow = '';
+    document.body.style.touchAction = '';
+
     this.overlay.classList.remove('flex');
     this.overlay.classList.add('hidden');
     this.overlay.innerHTML = '';
     this.selectedPhotoBlob = null;
     this.selectedAudioFile = null;
+    this.recordedVoiceBlob = null;
   }
 
   private detenerPreviewAudio(): void {
@@ -59,9 +82,9 @@ export class PublishModalComponent {
     const usuario = SessionService.getUsuario();
 
     this.overlay.innerHTML = `
-      <div class="glass-panel-elevated w-full max-w-lg rounded-t-3xl sm:rounded-3xl border border-white/10 p-5 sm:p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto no-scrollbar transform transition-transform duration-300">
-        <!-- Barra de arrastre superior para móvil -->
-        <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-4 sm:hidden"></div>
+      <div class="w-full max-w-lg rounded-t-[32px] sm:rounded-3xl bg-neutral-950/98 backdrop-blur-2xl border-t sm:border border-champagne-400/40 p-5 sm:p-6 shadow-[0_-20px_50px_rgba(0,0,0,0.85)] relative max-h-[88vh] overflow-y-auto no-scrollbar transform transition-transform duration-300">
+        <!-- Barra tirador superior táctil -->
+        <div class="w-12 h-1 bg-champagne-400/40 rounded-full mx-auto mb-4"></div>
 
         <button id="btn-cerrar-publish-modal" class="absolute top-4 right-4 text-neutral-400 hover:text-white text-sm p-2" title="Cerrar">✕</button>
 
@@ -110,7 +133,7 @@ export class PublishModalComponent {
           <button id="opt-subir-dedicatoria" class="p-5 rounded-2xl glass-panel border border-white/10 hover:border-champagne-400/40 transition text-left space-y-2 group">
             <span class="text-xs uppercase font-mono tracking-widest text-neutral-400 font-semibold block">Muro</span>
             <h4 class="text-sm font-semibold text-white group-hover:text-champagne-200">Dedicatoria</h4>
-            <p class="text-[11px] text-neutral-400 leading-relaxed">Deja un mensaje, anécdota o buenos deseos en el muro del grupo.</p>
+            <p class="text-[11px] text-neutral-400 leading-relaxed">Deja un mensaje escrito o graba una nota de voz para Nita.</p>
           </button>
         </div>
       </div>
@@ -161,7 +184,7 @@ export class PublishModalComponent {
 
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[11px] text-neutral-300 mb-1">Categoría <span class="text-champagne-400">*</span></label>
+              <label class="block text-[11px] text-neutral-300 mb-1">Categoría <span class="text-champagne-400 font-bold">*</span></label>
               <select id="modal-polaroid-categoria" required class="w-full bg-neutral-900 border border-champagne-400/30 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-champagne-400 cursor-pointer">
                 <option value="" disabled selected>-- Categoría obligatoria --</option>
                 <option value="rumba">La Rumba</option>
@@ -259,7 +282,41 @@ export class PublishModalComponent {
 
           <div>
             <label class="block text-[11px] text-neutral-300 mb-1">Tu Mensaje para Mariana</label>
-            <textarea id="modal-ded-mensaje" rows="4" required placeholder="Escribe aquí tus mejores deseos, anécdotas o palabras de cariño..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-champagne-400"></textarea>
+            <textarea id="modal-ded-mensaje" rows="3" required placeholder="Escribe aquí tus mejores deseos, anécdotas o palabras de cariño..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-champagne-400"></textarea>
+          </div>
+
+          <!-- Grabador de Nota de Voz (Hasta 30s) -->
+          <div class="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-xs font-semibold text-champagne-300 block">Nota de voz del grupo</span>
+                <span class="text-[10px] text-neutral-400">Graba un audio felicitando a Nita (máx. 30s)</span>
+              </div>
+              <span id="voice-record-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-white/5 text-neutral-400">
+                0:00 / 0:30
+              </span>
+            </div>
+
+            <!-- Controles de grabación -->
+            <div id="voice-record-controls" class="flex items-center gap-2">
+              <button type="button" id="btn-toggle-voice-record" class="flex-1 py-2 px-3 rounded-xl btn-secondary text-xs font-semibold flex items-center justify-center gap-2 transition">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500" id="rec-dot"></span>
+                <span id="rec-btn-text">Grabar Nota de Voz</span>
+              </button>
+            </div>
+
+            <!-- Vista previa del audio grabado -->
+            <div id="voice-preview-container" class="hidden items-center justify-between p-2 rounded-xl bg-black/40 border border-champagne-400/30">
+              <div class="flex items-center gap-2">
+                <button type="button" id="btn-play-voice-preview" class="w-7 h-7 rounded-full bg-champagne-400 text-midnight flex items-center justify-center text-xs font-bold">
+                  ▶
+                </button>
+                <span class="text-xs text-champagne-200 font-mono">Nota de voz lista</span>
+              </div>
+              <button type="button" id="btn-delete-voice-preview" class="text-neutral-400 hover:text-rose-400 text-xs px-2 py-1">
+                Eliminar
+              </button>
+            </div>
           </div>
 
           <button type="submit" id="btn-modal-submit-dedicatoria" class="w-full py-3 rounded-xl btn-primary text-xs uppercase tracking-wider font-semibold shadow-subtle">
@@ -482,6 +539,39 @@ export class PublishModalComponent {
     });
 
     const form = document.getElementById('form-modal-dedicatoria') as HTMLFormElement;
+    const btnRecord = document.getElementById('btn-toggle-voice-record');
+    const btnPlayVoice = document.getElementById('btn-play-voice-preview');
+    const btnDeleteVoice = document.getElementById('btn-delete-voice-preview');
+
+    btnRecord?.addEventListener('click', () => {
+      if (this.isRecordingVoice) {
+        this.detenerGrabacionVoz();
+      } else {
+        this.iniciarGrabacionVoz();
+      }
+    });
+
+    btnPlayVoice?.addEventListener('click', () => {
+      if (!this.recordedVoiceBlob) return;
+      if (!this.voiceAudioPreview.paused) {
+        this.voiceAudioPreview.pause();
+        btnPlayVoice.textContent = '▶';
+      } else {
+        audioPlayer.detenerTodo();
+        this.voiceAudioPreview.src = URL.createObjectURL(this.recordedVoiceBlob);
+        this.voiceAudioPreview.play();
+        btnPlayVoice.textContent = '⏸';
+      }
+    });
+
+    btnDeleteVoice?.addEventListener('click', () => {
+      this.recordedVoiceBlob = null;
+      document.getElementById('voice-preview-container')?.classList.add('hidden');
+      document.getElementById('voice-preview-container')?.classList.remove('flex');
+      const badge = document.getElementById('voice-record-badge');
+      if (badge) badge.textContent = '0:00 / 0:30';
+    });
+
     form?.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -496,12 +586,23 @@ export class PublishModalComponent {
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span>Guardando en el muro...</span>';
 
+      let audioUrl: string | undefined = undefined;
+
+      if (this.recordedVoiceBlob) {
+        showToast('Subiendo nota de voz a la nube...', 'info');
+        const cloudVoice = await SupabaseService.subirNotaVoz(this.recordedVoiceBlob);
+        if (cloudVoice) {
+          audioUrl = cloudVoice;
+        }
+      }
+
       const nuevaDedicatoria: Dedicatoria = {
         id: 'd_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
         usuarioId: usuario?.id,
         autorNombre,
         autorApodo,
         mensaje,
+        audioUrl,
         reaccionesCount: 0,
         tieneMiReaccion: false,
         creadoEn: new Date().toISOString(),
@@ -514,6 +615,88 @@ export class PublishModalComponent {
       this.cerrar();
       this.onPublishSuccess();
     });
+  }
+
+  private async iniciarGrabacionVoz(): Promise<void> {
+    try {
+      this.voiceMediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.voiceChunks = [];
+
+      const options = MediaRecorder.isTypeSupported('audio/webm')
+        ? { mimeType: 'audio/webm' }
+        : MediaRecorder.isTypeSupported('audio/mp4')
+          ? { mimeType: 'audio/mp4' }
+          : undefined;
+
+      this.mediaRecorder = new MediaRecorder(this.voiceMediaStream, options);
+
+      this.mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) this.voiceChunks.push(e.data);
+      };
+
+      this.mediaRecorder.onstop = () => {
+        this.recordedVoiceBlob = new Blob(this.voiceChunks, {
+          type: this.mediaRecorder?.mimeType || 'audio/webm',
+        });
+        const previewWrap = document.getElementById('voice-preview-container');
+        if (previewWrap) {
+          previewWrap.classList.remove('hidden');
+          previewWrap.classList.add('flex');
+        }
+      };
+
+      this.mediaRecorder.start();
+      this.isRecordingVoice = true;
+      this.voiceSeconds = 0;
+
+      const btnText = document.getElementById('rec-btn-text');
+      const dot = document.getElementById('rec-dot');
+      const badge = document.getElementById('voice-record-badge');
+
+      if (btnText) btnText.textContent = 'Detener Grabación';
+      if (dot) dot.classList.add('animate-ping');
+
+      this.voiceRecordTimer = window.setInterval(() => {
+        this.voiceSeconds++;
+        if (badge) badge.textContent = `${this.formatTime(this.voiceSeconds)} / 0:30`;
+        if (this.voiceSeconds >= 30) {
+          this.detenerGrabacionVoz();
+        }
+      }, 1000);
+    } catch (err) {
+      console.warn('Error accediendo al micrófono:', err);
+      showToast('No se pudo acceder al micrófono para grabar', 'alerta');
+    }
+  }
+
+  private detenerGrabacionVoz(): void {
+    if (!this.isRecordingVoice) return;
+    this.isRecordingVoice = false;
+
+    if (this.voiceRecordTimer) {
+      clearInterval(this.voiceRecordTimer);
+      this.voiceRecordTimer = null;
+    }
+
+    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+      this.mediaRecorder.stop();
+    }
+
+    if (this.voiceMediaStream) {
+      this.voiceMediaStream.getTracks().forEach((t) => t.stop());
+      this.voiceMediaStream = null;
+    }
+
+    const btnText = document.getElementById('rec-btn-text');
+    const dot = document.getElementById('rec-dot');
+    if (btnText) btnText.textContent = 'Grabar de Nuevo';
+    if (dot) dot.classList.remove('animate-ping');
+  }
+
+  private cancelarGrabacionVoz(): void {
+    this.detenerGrabacionVoz();
+    this.recordedVoiceBlob = null;
+    this.voiceChunks = [];
   }
 
   private actualizarTrimmerLabels(start: number): void {
