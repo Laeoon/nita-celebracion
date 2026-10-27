@@ -196,6 +196,36 @@ export class SupabaseService {
   }
 
   /**
+   * Actualizar contador de reacciones de un recuerdo
+   */
+  static async actualizarReaccionesRecuerdo(id: string, count: number): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('recuerdos')
+        .update({ reacciones_count: count })
+        .eq('id', id);
+      return !error;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Actualizar contador de reacciones de una dedicatoria
+   */
+  static async actualizarReaccionesDedicatoria(id: string, count: number): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('dedicatorias')
+        .update({ reacciones_count: count })
+        .eq('id', id);
+      return !error;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
    * Eliminar dedicatoria de Supabase
    */
   static async eliminarDedicatoria(id: string): Promise<boolean> {

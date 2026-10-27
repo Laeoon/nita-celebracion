@@ -23,22 +23,46 @@ class AppStore {
   };
 
   private listeners: Array<() => void> = [];
+  private misLikes: Set<string> = new Set();
 
   constructor() {
+    this.cargarMisLikes();
     this.cargarDeStorage();
     this.restaurarAudiosPersistentes();
     this.sincronizarConSupabase();
+  }
+
+  private cargarMisLikes(): void {
+    const raw = localStorage.getItem('nita_mis_likes');
+    if (raw) {
+      try {
+        const arr = JSON.parse(raw);
+        this.misLikes = new Set(arr);
+      } catch {
+        this.misLikes = new Set();
+      }
+    }
+  }
+
+  private guardarMisLikes(): void {
+    localStorage.setItem('nita_mis_likes', JSON.stringify(Array.from(this.misLikes)));
   }
 
   private async sincronizarConSupabase(): Promise<void> {
     try {
       const cloudRecuerdos = await SupabaseService.fetchRecuerdos();
       if (cloudRecuerdos !== null) {
-        this.state.recuerdos = cloudRecuerdos;
+        this.state.recuerdos = cloudRecuerdos.map((r) => ({
+          ...r,
+          tieneMiReaccion: this.misLikes.has(r.id),
+        }));
       }
       const cloudDedicatorias = await SupabaseService.fetchDedicatorias();
       if (cloudDedicatorias !== null) {
-        this.state.dedicatorias = cloudDedicatorias;
+        this.state.dedicatorias = cloudDedicatorias.map((d) => ({
+          ...d,
+          tieneMiReaccion: this.misLikes.has(d.id),
+        }));
       }
       this.guardarEnStorage();
       this.notificar();
@@ -49,7 +73,10 @@ class AppStore {
         .on('postgres_changes', { event: '*', schema: 'public', table: 'recuerdos' }, async () => {
           const recs = await SupabaseService.fetchRecuerdos();
           if (recs) {
-            this.state.recuerdos = recs;
+            this.state.recuerdos = recs.map((r) => ({
+              ...r,
+              tieneMiReaccion: this.misLikes.has(r.id),
+            }));
             this.guardarEnStorage();
             this.notificar();
           }
@@ -57,7 +84,10 @@ class AppStore {
         .on('postgres_changes', { event: '*', schema: 'public', table: 'dedicatorias' }, async () => {
           const deds = await SupabaseService.fetchDedicatorias();
           if (deds) {
-            this.state.dedicatorias = deds;
+            this.state.dedicatorias = deds.map((d) => ({
+              ...d,
+              tieneMiReaccion: this.misLikes.has(d.id),
+            }));
             this.guardarEnStorage();
             this.notificar();
           }
@@ -194,19 +224,29 @@ class AppStore {
   }
 
   toggleReaccion(tipo: 'recuerdo' | 'dedicatoria', id: string): void {
+    const yaDiLike = this.misLikes.has(id);
+    if (yaDiLike) {
+      this.misLikes.delete(id);
+    } else {
+      this.misLikes.add(id);
+    }
+    this.guardarMisLikes();
+
     if (tipo === 'recuerdo') {
       const item = this.state.recuerdos.find((r) => r.id === id);
       if (item) {
-        item.tieneMiReaccion = !item.tieneMiReaccion;
-        item.reaccionesCount = (item.reaccionesCount || 0) + (item.tieneMiReaccion ? 1 : -1);
+        item.tieneMiReaccion = !yaDiLike;
+        item.reaccionesCount = Math.max(0, (item.reaccionesCount || 0) + (yaDiLike ? -1 : 1));
         this.guardarEnStorage();
+        SupabaseService.actualizarReaccionesRecuerdo(id, item.reaccionesCount);
       }
     } else {
       const item = this.state.dedicatorias.find((d) => d.id === id);
       if (item) {
-        item.tieneMiReaccion = !item.tieneMiReaccion;
-        item.reaccionesCount = (item.reaccionesCount || 0) + (item.tieneMiReaccion ? 1 : -1);
+        item.tieneMiReaccion = !yaDiLike;
+        item.reaccionesCount = Math.max(0, (item.reaccionesCount || 0) + (yaDiLike ? -1 : 1));
         this.guardarEnStorage();
+        SupabaseService.actualizarReaccionesDedicatoria(id, item.reaccionesCount);
       }
     }
   }
