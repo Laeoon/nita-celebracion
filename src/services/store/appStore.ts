@@ -1,6 +1,6 @@
 import type { Recuerdo, Dedicatoria, Comentario, TrackMusical, CategoriaRecuerdo } from '../../types';
 import { PLAYLIST_OFICIAL } from '../../constants/playlist';
-import { obtenerAudioDeIndexedDB, eliminarAudioDeIndexedDB } from '../storage/audioStorage';
+import { eliminarAudioDeIndexedDB } from '../storage/audioStorage';
 import { SupabaseService, supabase } from '../supabase/client';
 
 interface AppState {
@@ -66,7 +66,7 @@ class AppStore {
       }
       const cloudCanciones = await SupabaseService.fetchCanciones();
       if (cloudCanciones !== null) {
-        this.state.tracks = cloudCanciones;
+        this.state.tracks = cloudCanciones.filter((t) => Boolean(t.audioUrl && !t.audioUrl.startsWith('blob:')));
       }
       this.guardarEnStorage();
       this.notificar();
@@ -98,8 +98,8 @@ class AppStore {
         })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'canciones' }, async () => {
           const songs = await SupabaseService.fetchCanciones();
-          if (songs && songs.length) {
-            this.state.tracks = songs;
+          if (songs !== null) {
+            this.state.tracks = songs.filter((t) => Boolean(t.audioUrl && !t.audioUrl.startsWith('blob:')));
             this.guardarEnStorage();
             this.notificar();
           }
@@ -111,18 +111,13 @@ class AppStore {
   }
 
   private async restaurarAudiosPersistentes(): Promise<void> {
-    let huboCambios = false;
-    for (const track of this.state.tracks) {
-      if (track.audioUrl.startsWith('blob:') || !track.audioUrl) {
-        const blob = await obtenerAudioDeIndexedDB(track.id);
-        if (blob) {
-          track.audioUrl = URL.createObjectURL(blob);
-          huboCambios = true;
-        }
+    if (this.state.tracks && this.state.tracks.length) {
+      const tracksValidos = this.state.tracks.filter((t) => Boolean(t.audioUrl && !t.audioUrl.startsWith('blob:')));
+      if (tracksValidos.length !== this.state.tracks.length) {
+        this.state.tracks = tracksValidos;
+        this.guardarEnStorage();
+        this.notificar();
       }
-    }
-    if (huboCambios) {
-      this.notificar();
     }
   }
 
@@ -138,7 +133,7 @@ class AppStore {
     }
     // Limpiar pistas con URLs temporales blob muertas
     if (this.state.tracks && this.state.tracks.length) {
-      this.state.tracks = this.state.tracks.filter((t) => !t.audioUrl || !t.audioUrl.startsWith('blob:'));
+      this.state.tracks = this.state.tracks.filter((t) => Boolean(t.audioUrl && !t.audioUrl.startsWith('blob:')));
     }
 
     // Si la lista de tracks está vacía, cargar de fábrica si hay pistas oficiales
@@ -270,6 +265,10 @@ class AppStore {
 
   // --- TRACKS ---
   agregarTrack(track: TrackMusical): boolean {
+    if (!track.audioUrl || track.audioUrl.startsWith('blob:')) {
+      console.warn('No se puede agregar track con URL blob o vacía:', track.audioUrl);
+      return false;
+    }
     // Reemplazar pista previa si tenía el mismo título o id
     this.state.tracks = this.state.tracks.filter(
       (t) => t.id !== track.id && t.titulo.trim().toLowerCase() !== track.titulo.trim().toLowerCase()

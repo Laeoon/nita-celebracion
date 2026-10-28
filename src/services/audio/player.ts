@@ -1,6 +1,7 @@
 import { store } from '../store/appStore';
 import { supabase } from '../supabase/client';
 import { SessionService } from '../auth/session';
+import { showToast } from '../../components/toast';
 import type { TrackMusical } from '../../types';
 
 class AudioPlayerService {
@@ -157,10 +158,15 @@ class AudioPlayerService {
   // --- CONTROLES PRINCIPALES ---
   play(index?: number): void {
     const tracks = store.getTracks();
-    if (!tracks.length) return;
+    if (!tracks.length) {
+      showToast('No hay pistas cargadas en el reproductor', 'alerta');
+      return;
+    }
 
     if (index !== undefined && index >= 0 && index < tracks.length) {
       this.currentIndex = index;
+    } else if (this.currentIndex >= tracks.length || this.currentIndex < 0) {
+      this.currentIndex = 0;
     }
 
     // Frenar absolutamente cualquier otro audio en curso
@@ -170,10 +176,15 @@ class AudioPlayerService {
     }
 
     const track = tracks[this.currentIndex];
-    if (!track || !track.audioUrl) return;
+    if (!track || !track.audioUrl) {
+      showToast('La pista seleccionada no tiene un enlace de audio válido', 'alerta');
+      return;
+    }
 
-    if (this.audio.src !== track.audioUrl) {
+    const srcHaCambiado = this.audio.src !== track.audioUrl;
+    if (srcHaCambiado) {
       this.audio.src = track.audioUrl;
+      this.audio.load();
     }
 
     this.audio.muted = this.isMuted;
@@ -195,7 +206,12 @@ class AudioPlayerService {
     }).catch((err) => {
       console.warn('Play rechazado o archivo no accesible:', err);
       this.isPlaying = false;
+      this.detenerProgreso();
       this.notificar();
+      const mensaje = err?.name === 'NotAllowedError'
+        ? 'Toca la pantalla para activar el audio en tu navegador'
+        : `No se pudo reproducir "${track.titulo}". Revisa el formato o conexión.`;
+      showToast(mensaje, 'alerta');
     });
   }
 
@@ -311,6 +327,9 @@ class AudioPlayerService {
   // --- ESTADO Y FRECUENCIAS ---
   getEstado() {
     const tracks = store.getTracks();
+    if (this.currentIndex >= tracks.length && tracks.length > 0) {
+      this.currentIndex = 0;
+    }
     const currentTrack: TrackMusical | null = tracks[this.currentIndex] || null;
 
     return {

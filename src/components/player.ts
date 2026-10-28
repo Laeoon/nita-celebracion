@@ -114,11 +114,11 @@ export class PlayerComponent {
             </div>
 
             <!-- Botón para subir música libre -->
-            <label class="cursor-pointer px-3.5 py-1.5 rounded-xl btn-secondary text-xs flex items-center gap-1.5 font-medium border-champagne-400/30 text-champagne-300 hover:border-champagne-300 hover:bg-champagne-400/10 transition shadow-sm">
+            <label id="btn-upload-music-label" class="cursor-pointer px-3.5 py-1.5 rounded-xl btn-secondary text-xs flex items-center gap-1.5 font-medium border-champagne-400/30 text-champagne-300 hover:border-champagne-300 hover:bg-champagne-400/10 transition shadow-sm">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
-              <span>Agregar canción</span>
+              <span id="btn-upload-music-text">Agregar canción</span>
               <input id="input-subir-mp3" type="file" accept="audio/*" multiple class="hidden" />
             </label>
           </div>
@@ -230,56 +230,71 @@ export class PlayerComponent {
       const files = (e.target as HTMLInputElement).files;
       if (!files || !files.length) return;
 
+      const uploadLabel = document.getElementById('btn-upload-music-label');
+      const uploadText = document.getElementById('btn-upload-music-text');
       const usuario = SessionService.getUsuario();
       const autorTexto = usuario ? `Sumada por ${usuario.nombre}` : 'Mariana “Nita” • Fiesta';
 
       let agregadas = 0;
       let duplicadas = 0;
 
-      showToast('Subiendo música a la nube para todo el grupo...', 'info');
+      // Actualizar estado del botón e informar al usuario
+      if (uploadLabel) uploadLabel.classList.add('opacity-60', 'pointer-events-none');
+      if (uploadText) uploadText.textContent = 'Subiendo canción a la nube...';
+      if (mp3Input) mp3Input.disabled = true;
 
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const cleanName = file.name.replace(/\.[^/.]+$/, '');
-        const trackId = 'trk_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+      showToast('Subiendo canción a la nube...', 'info');
 
-        // Subir a Supabase Storage para que suene en todos los teléfonos
-        let audioUrl = URL.createObjectURL(file);
-        const cloudUrl = await SupabaseService.subirCancion(file, cleanName);
-        if (cloudUrl) {
-          audioUrl = cloudUrl;
+      try {
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const cleanName = file.name.replace(/\.[^/.]+$/, '');
+          const trackId = 'trk_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+
+          // Subir a Supabase Storage primero
+          const cloudUrl = await SupabaseService.subirCancion(file, cleanName);
+
+          if (!cloudUrl) {
+            showToast('Error subiendo la canción a la nube', 'alerta');
+            continue;
+          }
+
+          // Guardar también en IndexedDB local por resiliencia
+          await guardarAudioEnIndexedDB(trackId, file);
+
+          const ok = store.agregarTrack({
+            id: trackId,
+            titulo: cleanName,
+            artista: autorTexto,
+            audioUrl: cloudUrl,
+          });
+
+          if (ok) {
+            agregadas++;
+          } else {
+            duplicadas++;
+          }
         }
 
-        // Guardar también en IndexedDB local por resiliencia
-        await guardarAudioEnIndexedDB(trackId, file);
-
-        const ok = store.agregarTrack({
-          id: trackId,
-          titulo: cleanName,
-          artista: autorTexto,
-          audioUrl: audioUrl,
-        });
-
-        if (ok) {
-          agregadas++;
-        } else {
-          duplicadas++;
+        if (duplicadas > 0 && agregadas === 0) {
+          showToast('Esa canción ya está en la lista (evitamos duplicados)', 'alerta');
+        } else if (agregadas > 0) {
+          showToast(`Se agregaron ${agregadas} canción(es) a la playlist`, 'exito');
         }
-      }
+      } finally {
+        if (uploadLabel) uploadLabel.classList.remove('opacity-60', 'pointer-events-none');
+        if (uploadText) uploadText.textContent = 'Agregar canción';
+        if (mp3Input) {
+          mp3Input.disabled = false;
+          mp3Input.value = '';
+        }
+        this.actualizarUI();
+        this.actualizarPlaylistItems();
 
-      if (duplicadas > 0 && agregadas === 0) {
-        showToast('Esa canción ya está en la lista (evitamos duplicados)', 'alerta');
-      } else if (agregadas > 0) {
-        showToast(`Se agregaron ${agregadas} canción(es) a la playlist`, 'exito');
-      }
-
-      mp3Input.value = '';
-      this.actualizarUI();
-      this.actualizarPlaylistItems();
-
-      // Abrir lista para que vea que se agregaron
-      if (!this.isPlaylistOpen && togglePlaylistBtn) {
-        togglePlaylistBtn.click();
+        // Abrir lista para que vea que se agregaron
+        if (agregadas > 0 && !this.isPlaylistOpen && togglePlaylistBtn) {
+          togglePlaylistBtn.click();
+        }
       }
     });
   }

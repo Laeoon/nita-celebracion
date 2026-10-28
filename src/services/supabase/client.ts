@@ -289,12 +289,19 @@ export class SupabaseService {
         return null;
       }
 
-      return (data || []).map((row) => ({
-        id: row.id,
-        titulo: row.titulo,
-        artista: row.artista || 'Mariana “Nita” • Fiesta',
-        audioUrl: row.audio_url,
-      }));
+      return (data || [])
+        .filter((row) => {
+          if (!row.audio_url || typeof row.audio_url !== 'string') return false;
+          const trimmed = row.audio_url.trim();
+          if (trimmed === '' || trimmed.startsWith('blob:')) return false;
+          return trimmed.startsWith('http://') || trimmed.startsWith('https://');
+        })
+        .map((row) => ({
+          id: row.id,
+          titulo: row.titulo,
+          artista: row.artista || 'Mariana “Nita” • Fiesta',
+          audioUrl: row.audio_url.trim(),
+        }));
     } catch (err) {
       console.warn('Excepción al consultar canciones:', err);
       return null;
@@ -305,12 +312,22 @@ export class SupabaseService {
    * Guardar canción en la base de datos de Supabase
    */
   static async guardarCancion(track: TrackMusical): Promise<boolean> {
+    if (
+      !track.audioUrl ||
+      typeof track.audioUrl !== 'string' ||
+      track.audioUrl.trim().startsWith('blob:') ||
+      (!track.audioUrl.trim().startsWith('http://') && !track.audioUrl.trim().startsWith('https://'))
+    ) {
+      console.warn('URL de audio inválida para Supabase (solo se permiten URLs http/https):', track.audioUrl);
+      return false;
+    }
+
     try {
       const { error } = await supabase.from('canciones').insert({
         id: track.id,
         titulo: track.titulo,
         artista: track.artista,
-        audio_url: track.audioUrl,
+        audio_url: track.audioUrl.trim(),
       });
       if (error) {
         console.error('Error insertando canción en Supabase:', error);
