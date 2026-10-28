@@ -11,12 +11,6 @@ class AudioPlayerService {
   private isMuted: boolean = false;
   private progressInterval: number | null = null;
 
-  // Web Audio API para espectro de audio en tiempo real
-  private audioCtx: AudioContext | null = null;
-  private analyser: AnalyserNode | null = null;
-  private sourceNode: MediaElementAudioSourceNode | null = null;
-  private dataArray: Uint8Array | null = null;
-
   // Mini reproductor de polaroid activo (para evitar solapamientos)
   private polaroidAudio: HTMLAudioElement = new Audio();
   private activePolaroidId: string | null = null;
@@ -112,25 +106,6 @@ class AudioPlayerService {
       .then();
   }
 
-  private initWebAudio(): void {
-    if (this.audioCtx) return;
-    try {
-      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      this.audioCtx = new AudioContextClass();
-      this.analyser = this.audioCtx.createAnalyser();
-      this.analyser.fftSize = 64; // Rango óptimo para 5 a 10 barras visuales
-      
-      this.sourceNode = this.audioCtx.createMediaElementSource(this.audio);
-      this.sourceNode.connect(this.analyser);
-      this.analyser.connect(this.audioCtx.destination);
-
-      const bufferLength = this.analyser.frequencyBinCount;
-      this.dataArray = new Uint8Array(bufferLength);
-    } catch (e) {
-      console.warn('Web Audio Analyser no inicializado o restringido por CORS/navegador', e);
-    }
-  }
-
   subscribe(listener: () => void): () => void {
     this.listeners.push(listener);
     return () => {
@@ -188,21 +163,13 @@ class AudioPlayerService {
     }
 
     this.audio.muted = this.isMuted;
+    this.audio.volume = 1.0;
 
     this.audio.play().then(() => {
       this.isPlaying = true;
       this.iniciarProgreso();
       this.broadcastDjState();
       this.notificar();
-
-      try {
-        this.initWebAudio();
-        if (this.audioCtx && this.audioCtx.state === 'suspended') {
-          this.audioCtx.resume();
-        }
-      } catch (e) {
-        console.warn('Web Audio visualizer no crítico:', e);
-      }
     }).catch((err) => {
       console.warn('Play rechazado o archivo no accesible:', err);
       this.isPlaying = false;
@@ -346,17 +313,17 @@ class AudioPlayerService {
   }
 
   getFrecuencias(): number[] {
-    if (!this.analyser || !this.dataArray || !this.isPlaying) {
+    if (!this.isPlaying) {
       return [4, 4, 4, 4, 4];
     }
-    this.analyser.getByteFrequencyData(this.dataArray as unknown as any);
-    // Tomar 5 puntos de muestra en el espectro
-    const indices = [1, 3, 6, 9, 13];
-    return indices.map((idx) => {
-      const val = this.dataArray ? this.dataArray[idx] || 0 : 0;
-      // Mapear de 0-255 a altura en px (4px a 24px)
-      return Math.max(4, Math.round((val / 255) * 24));
-    });
+    const t = performance.now() * 0.008;
+    return [
+      Math.round(Math.abs(Math.sin(t * 1.2)) * 18 + 6),
+      Math.round(Math.abs(Math.sin(t * 1.8 + 1)) * 20 + 4),
+      Math.round(Math.abs(Math.sin(t * 0.9 + 2)) * 16 + 8),
+      Math.round(Math.abs(Math.sin(t * 1.5 + 3)) * 22 + 4),
+      Math.round(Math.abs(Math.sin(t * 2.1 + 4)) * 17 + 6),
+    ];
   }
 }
 
