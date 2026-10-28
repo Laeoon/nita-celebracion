@@ -252,26 +252,53 @@ export class SupabaseService {
   }
 
   /**
-   * Sube un archivo MP3 completo al bucket 'clips-30s' (carpeta canciones)
+   * Sube un archivo MP3 completo al bucket 'clips-30s' (carpeta canciones) con reporte de progreso
    */
-  static async subirCancion(blob: Blob, _nombreArchivo?: string): Promise<string | null> {
-    try {
-      const safeId = 'song_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
-      const path = `canciones/${safeId}.mp3`;
-      const { data, error } = await supabase.storage.from('clips-30s').upload(path, blob, {
-        contentType: blob.type || 'audio/mpeg',
-        upsert: true,
-      });
-      if (error) {
-        console.error('Error subiendo canción a Supabase Storage:', error);
-        return null;
+  static async subirCancion(
+    blob: Blob,
+    _nombreArchivo?: string,
+    onProgress?: (porcentaje: number, cargadoMB: string, totalMB: string) => void
+  ): Promise<string | null> {
+    const safeId = 'song_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+    const path = `canciones/${safeId}.mp3`;
+    const uploadUrl = `${supabaseUrl}/storage/v1/object/clips-30s/${path}`;
+
+    return new Promise((resolve) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', uploadUrl, true);
+      xhr.setRequestHeader('apikey', supabaseAnonKey);
+      xhr.setRequestHeader('Authorization', `Bearer ${supabaseAnonKey}`);
+      xhr.setRequestHeader('Content-Type', blob.type || 'audio/mpeg');
+      xhr.setRequestHeader('x-upsert', 'true');
+
+      if (xhr.upload && onProgress) {
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable && e.total > 0) {
+            const pct = Math.round((e.loaded / e.total) * 100);
+            const loadedMB = (e.loaded / (1024 * 1024)).toFixed(1);
+            const totalMB = (e.total / (1024 * 1024)).toFixed(1);
+            onProgress(pct, loadedMB, totalMB);
+          }
+        };
       }
-      const { data: publicUrlData } = supabase.storage.from('clips-30s').getPublicUrl(data.path);
-      return publicUrlData.publicUrl;
-    } catch (err) {
-      console.error('Excepción al subir canción a Supabase:', err);
-      return null;
-    }
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          const { data: publicUrlData } = supabase.storage.from('clips-30s').getPublicUrl(path);
+          resolve(publicUrlData.publicUrl);
+        } else {
+          console.error('Error XHR subiendo canción a Supabase:', xhr.status, xhr.responseText);
+          resolve(null);
+        }
+      };
+
+      xhr.onerror = () => {
+        console.error('Error de red al subir canción a Supabase');
+        resolve(null);
+      };
+
+      xhr.send(blob);
+    });
   }
 
   /**

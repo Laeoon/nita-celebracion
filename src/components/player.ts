@@ -251,8 +251,12 @@ export class PlayerComponent {
           const cleanName = file.name.replace(/\.[^/.]+$/, '');
           const trackId = 'trk_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
 
-          // Subir a Supabase Storage primero
-          const cloudUrl = await SupabaseService.subirCancion(file, cleanName);
+          // Subir a Supabase Storage primero con reporte de progreso
+          const cloudUrl = await SupabaseService.subirCancion(file, cleanName, (pct, loaded, total) => {
+            if (uploadText) {
+              uploadText.textContent = `Subiendo: ${pct}% (${loaded}/${total}MB)`;
+            }
+          });
 
           if (!cloudUrl) {
             showToast('Error subiendo la canción a la nube', 'alerta');
